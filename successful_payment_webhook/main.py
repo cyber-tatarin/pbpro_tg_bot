@@ -1,0 +1,33 @@
+from flask import Flask, request
+import sys
+import json
+from prodamus.main import confirm_payment
+
+app = Flask(__name__)
+
+
+@app.route('/payment', methods=['POST'])
+def payment():
+    # Handle the payment data here
+    print("it's post request baby", file=sys.stderr)
+    print(request.form.to_dict(), file=sys.stderr)
+    print(request.headers.get('Sign'), file=sys.stderr)
+    data = request.form.to_dict()
+    signature = request.headers.get('Sign')
+    
+    confirm_payment(signature, data)
+    
+    return "Payment received"
+
+
+@app.route('/', methods=['GET'])
+def go():
+    # Handle the payment data here
+    # Do something with the data
+    print("we've got data in get request", file=sys.stderr)
+    return "Payment received"
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
+    
