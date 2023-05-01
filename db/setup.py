@@ -8,7 +8,7 @@ from . import models
 
 load_dotenv(os.path.join(os.path.pardir, '.env'))
 
-engine = create_engine(f'postgresql://postgres:{os.getenv("DB_PASSWORD")}@localhost/{os.getenv("DB_NAME")}')
+engine = create_engine(f'{os.getenv("DB_ENGINE")}://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}/{os.getenv("DB_NAME")}')
 
 Session = sessionmaker(bind=engine)
 
