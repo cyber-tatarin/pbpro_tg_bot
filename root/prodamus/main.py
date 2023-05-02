@@ -15,7 +15,7 @@ logging.basicConfig(
 )
 
 
-def confirm_payment(signature, data):
+async def confirm_payment(signature, data):
     if verify_signature(signature, data):
         if int(data['sum']) >= 2000 and data['payment_status'] == 'success':
             logging.info('we are in verify')

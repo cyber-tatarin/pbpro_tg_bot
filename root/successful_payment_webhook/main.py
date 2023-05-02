@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 
 @app.route('/payment', methods=['POST'])
-def payment():
+async def payment():
     # Handle the payment data here
     print("it's post request baby")
     print(request.form.to_dict())
@@ -31,7 +31,7 @@ def payment():
     data = request.form.to_dict()
     signature = request.headers.get('Sign')
     
-    confirm_payment(signature, data)
+    await confirm_payment(signature, data)
     
     return "Payment received"
 
