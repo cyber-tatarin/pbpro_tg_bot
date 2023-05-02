@@ -1,6 +1,6 @@
 from ..db import setup as db
 from ..db import models
-from utils import verify_signature
+from .utils import verify_signature
 from ..tg.main import payment_confirmed
 
 
