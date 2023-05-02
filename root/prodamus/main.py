@@ -24,4 +24,8 @@ async def confirm_payment(signature, data):
             if session.is_active:
                 session.close()
             await payment_confirmed(user.client_tg_id)
+            return
+        return
+    return
+
         

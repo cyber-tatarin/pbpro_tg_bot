@@ -16,8 +16,7 @@ logging.basicConfig(
 
 async def handle_post_request(request):
     try:
-        binary_data = await request.read()  # get request body as a json
-        data = json.loads(binary_data.decode())
+        data = await request.json(content_type=None)  # get request body as a raw json
         signature = str(request.headers.get('Sign'))
     
         logging.info(data)
