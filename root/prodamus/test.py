@@ -2,7 +2,7 @@ import hashlib
 import json
 import hmac
 from collections.abc import MutableMapping
-from utils import generate_signature
+from .utils import generate_signature
 
 data = {
     'date': '2023-04-29T16:01:10+03:00',
