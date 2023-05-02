@@ -1,10 +1,11 @@
 import os
+import sys
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-import models
+sys.path.append(os.path.join(os.path.abspath(os.path.pardir), 'db'))
+import db.models as models
 
 load_dotenv(os.path.join(os.path.pardir, '.env'))
 print(os.path.join(os.path.pardir, '.env'))
