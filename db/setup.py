@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-import db.models as models
+import models
 
 load_dotenv(os.path.join(os.path.pardir, '.env'))
 print(os.path.join(os.path.pardir, '.env'))
