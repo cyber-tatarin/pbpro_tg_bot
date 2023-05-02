@@ -1,5 +1,4 @@
 import os
-import sys
 
 from dotenv import load_dotenv, find_dotenv
 from sqlalchemy import create_engine

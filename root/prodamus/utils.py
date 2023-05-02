@@ -23,7 +23,7 @@ def generate_payment_link(phone_number, client_tg_id):
         session.commit()
     except IntegrityError:
         session.rollback()
-        user = session.query(models.User).filter(models.User.client_tg_id==client_tg_id).first()
+        user = session.query(models.User).filter(models.User.client_tg_id == client_tg_id).first()
         user.order_id = order_id
         session.commit()
         
