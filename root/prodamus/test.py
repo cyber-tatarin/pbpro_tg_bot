@@ -44,7 +44,14 @@ secret_key = '0b6bef0be70db6ee8271736229b97b5804ef3af792d27622125abfefa66b2d2e'
 # signature = hmac.new(secret_key, msg=sorted_data , digestmod='sha256').hexdigest()
 # print(sorted_data.replace(b', ', b',').replace(b': ', b':'))
 
-
+# products = []
+# for key, value in data.items():
+#         if key.startswith('products'):
+#             index = int(key.split('[')[1].split(']')[0])
+#             field = key.split('[')[2].split(']')[0]
+#             if len(products) <= index:
+#                 products.append({})
+#             products[index][field] = value
 
 print(generate_signature(data))
 
