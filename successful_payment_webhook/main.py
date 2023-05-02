@@ -1,7 +1,11 @@
 from flask import Flask, request
 import sys
 import json
+import os
+
+sys.path.append(os.path.abspath(os.path.pardir))
 from prodamus.main import confirm_payment
+
 
 app = Flask(__name__)
 
