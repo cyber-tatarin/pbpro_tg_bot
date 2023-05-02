@@ -37,6 +37,6 @@ class User(Base):
     __tablename__ = "users"
 
     client_tg_id = Column("client_tg_id", String(10), primary_key=True)
-    order_id = Column("order_id", String(30), unique=True)
+    order_id = Column("order_id", String(50), unique=True)
     have_paid = Column("have_paid", Boolean, default=False)
     
