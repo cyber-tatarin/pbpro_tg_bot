@@ -10,11 +10,10 @@ from aiogram import Bot, Dispatcher, executor, types
 
 import keyboards
 import callback_data_models
-from tasks import TASKS
+from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
 from db import setup as db
 from db import models
 import utils
-from prodamus.utils import generate_payment_link
 
 load_dotenv(os.path.join(os.path.pardir, '.env'))
 
@@ -35,18 +34,18 @@ class TaskStates(StatesGroup):
 @dp.message_handler(state='*', commands=['start'])
 async def start(message: types.Message):
     print('start')
-    await message.answer('Добро пожаловать! Введите, пожалуйста Ваш телефон в международном формате. Вот несколько примеров:'
-                         ' ... \n\n '
-                         'Это необходимо, чтобы сформировать платежную ссылку')
-                         # reply_markup=keyboards.get_ikb_to_send_payment_link())
+    await message.answer(WELCOME_MESSAGE)
+    # reply_markup=keyboards.get_ikb_to_send_payment_link())
     await message.delete()
     await TaskStates.input_phone_number.set()
 
 
 @dp.message_handler(state=TaskStates.input_phone_number)
-async def send_payment_link(message: types.Message):
-    link = generate_payment_link(message.text, message.from_user.id)
-    await message.answer(link)
+async def send_payment_link(message: types.Message, state: FSMContext):
+    # link = generate_payment_link(message.text, message.from_user.id)
+    await message.answer(PAYMENT_LINK_MESSAGE,
+                         reply_markup=keyboards.get_ikb_to_send_payment_link(message.text, message.from_user.id))
+    await state.finish()
 
 
 @dp.callback_query_handler(callback_data_models.send_task_cb_data.filter())
@@ -92,27 +91,32 @@ async def accept_task_with_comment(callback_query: CallbackQuery, callback_data:
     
     receiver_id = callback_data['receiver_id']
     user = await bot.get_chat(receiver_id)
-    await callback_query.message.answer(f'Вы приняли решение пользователя {user.full_name}, дайте комментарий',
-                                        reply_markup=keyboards.get_ikb_to_cancel_state())
+    msg = await callback_query.message.answer(f'Вы приняли решение пользователя {user.full_name}, дайте комментарий',
+                                              reply_markup=keyboards.get_ikb_to_cancel_state())
     await TaskStates.send_comment_after_accept.set()
-
+    
     state = dp.get_current().current_state()
-    await state.update_data(receiver_id=receiver_id)
-    
-    # receiver_state = dp.current_state(user=receiver_id)
-    # print(receiver_state.user, 'receiver_state_user')
-    # receiver_data = await receiver_state.get_data()
-    # print(str(int(receiver_data['current_task_number'])+1))
-    # session = db.Session()
-    # task = session.query(models.Task).filter(models.Task.client_tg_id == receiver_id).first()
-    # task.current_task += 1
-    # session.commit()
-    # if session.is_active:
-    #     session.close()
-    
+    await state.update_data(receiver_id=receiver_id,
+                            cancel_message=msg['message_id'],
+                            chat_id=msg['chat']['id'])
     await callback_query.answer(cache_time=0)
+
+
+@dp.callback_query_handler(callback_data_models.decline_task_with_comment_cb_data.filter())
+async def decline_task_with_comment(callback_query: CallbackQuery, callback_data: dict):
+    print('inside')
     
-    # await receiver_state.update_data(current_task_number=str(int(receiver_data['current_task_number']+1)))
+    receiver_id = callback_data['receiver_id']
+    user = await bot.get_chat(receiver_id)
+    msg = await callback_query.message.answer(f'Вы отклонили решение пользователя {user.full_name}, дайте комментарий',
+                                              reply_markup=keyboards.get_ikb_to_cancel_state())
+    await TaskStates.send_comment_after_decline.set()
+    
+    state = dp.get_current().current_state()
+    await state.update_data(receiver_id=receiver_id,
+                            cancel_message=msg['message_id'],
+                            chat_id=msg['chat']['id'])
+    await callback_query.answer(cache_time=0)
 
 
 @dp.message_handler(state=TaskStates.send_comment_after_accept, content_types=['any'])
@@ -121,6 +125,9 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
     
     data = await state.get_data()
     receiver_id = data['receiver_id']
+    cancel_message_id = data['cancel_message']
+    chat_id = data['chat_id']
+    await bot.delete_message(chat_id, cancel_message_id)
     
     session = db.Session()
     task = session.query(models.Task).filter(models.Task.client_tg_id == receiver_id).first()
@@ -146,22 +153,49 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
     await state.finish()
 
 
+@dp.message_handler(state=TaskStates.send_comment_after_decline, content_types=['any'])
+async def send_comment_after_decline(message: types.Message, state: FSMContext):
+    print('send com')
+    
+    data = await state.get_data()
+    receiver_id = data['receiver_id']
+    cancel_message_id = data['cancel_message']
+    chat_id = data['chat_id']
+    await bot.delete_message(chat_id, cancel_message_id)
+    
+    message_for_client = f'Ваше решение не приняли. Вот ответ от Вашего ментора:'
+    
+    await utils.send_and_copy_message(bot, receiver_id, message, message_for_client)
+    # await bot.send_message(receiver_id, message_for_client, reply_to_message_id=message_id)
+    await bot.send_message(receiver_id, 'Следующим сообщением отправьте, пожалуйста, новое решение')
+    
+    receiver_state = dp.current_state(user=receiver_id)
+    await receiver_state.set_state(TaskStates.task_is_done.state)
+    
+    # await utils.send_and_copy_message(bot, receiver_id, message, message_for_client, reply_markup=reply_markup)
+    # await bot.copy_message(chat_id=receiver_id, from_chat_id=message.chat.id, message_id=message.message_id,
+    #                        reply_to_message_id=message_id,
+    #                        reply_markup=keyboards.get_ikb_to_get_task(str(task_number)))
+    
+    await state.finish()
+
+
 @dp.callback_query_handler(lambda c: c.data == 'send_payment_link')
 async def send_payment_link(callback_query: CallbackQuery):
     print('send')
     
     await bot.send_message(callback_query.from_user.id, 'link')
     
-    task = models.Task(client_tg_id=callback_query.from_user.id, current_task=1)
-    session = db.Session()
-    try:
-        session.add(task)
-        session.commit()
-    except Exception as x:
-        print(x)
-    finally:
-        if session.is_active:
-            session.close()
+    # task = models.Task(client_tg_id=callback_query.from_user.id, current_task=1)
+    # session = db.Session()
+    # try:
+    #     session.add(task)
+    #     session.commit()
+    # except Exception as x:
+    #     print(x)
+    # finally:
+    #     if session.is_active:
+    #         session.close()
     
     # state = dp.current_state(user=callback_query.from_user.id)
     # await state.update_data(current_task_number='1')
@@ -176,11 +210,43 @@ async def send_payment_link(callback_query: CallbackQuery):
 async def drop_state(callback_query: CallbackQuery):
     state = dp.current_state(user=callback_query.from_user.id)
     await state.finish()
+    await callback_query.message.delete()
+    await callback_query.answer('Действие отменено')
+    
+
+@dp.message_handler(commands=['gettask'])
+async def payment_confirmed_test(message: types.Message):
+    task = models.Task(client_tg_id=message.from_user.id, current_task=1)
+    session = db.Session()
+    print('gogo')
+    try:
+        session.add(task)
+        session.commit()
+    except Exception as x:
+        print(x)
+    finally:
+        if session.is_active:
+            session.close()
+    
+    await message.answer('Оплата прошла успешно, Вы готовы получить первое задание?',
+                         reply_markup=keyboards.get_ikb_to_get_task('1'))
 
 
 async def payment_confirmed(user_id):
+    task = models.Task(client_tg_id=user_id, current_task=1)
+    session = db.Session()
+    try:
+        session.add(task)
+        session.commit()
+    except Exception as x:
+        print(x)
+    finally:
+        if session.is_active:
+            session.close()
+    
     await bot.send_message(user_id, 'Оплата прошла успешно, Вы готовы получить первое задание?',
                            reply_markup=keyboards.get_ikb_to_get_task('1'))
 
+
 if __name__ == '__main__':
-    executor.start_polling(dispatcher=dp)
+    executor.start_polling(dispatcher=dp, skip_updates=True)

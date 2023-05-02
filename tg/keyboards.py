@@ -1,5 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import callback_data_models
+from prodamus.utils import generate_payment_link
 
 
 def get_ikb_to_get_task(task_number):
@@ -24,9 +25,10 @@ def get_ikb_to_check_users_tasks(user_id):
     return ikb_to_check_users_tasks
 
 
-def get_ikb_to_send_payment_link():
+def get_ikb_to_send_payment_link(phone_number, user_id):
     ikb_to_send_payment_link = InlineKeyboardMarkup()
-    b1 = InlineKeyboardButton(text='Оплатить', callback_data='send_payment_link')
+    link = generate_payment_link(phone_number, user_id)
+    b1 = InlineKeyboardButton(text='Оплатить', url=link)
     ikb_to_send_payment_link.add(b1)
     return ikb_to_send_payment_link
 

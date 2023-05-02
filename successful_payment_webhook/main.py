@@ -9,9 +9,9 @@ app = Flask(__name__)
 @app.route('/payment', methods=['POST'])
 def payment():
     # Handle the payment data here
-    print("it's post request baby", file=sys.stderr)
-    print(request.form.to_dict(), file=sys.stderr)
-    print(request.headers.get('Sign'), file=sys.stderr)
+    print("it's post request baby")
+    print(request.form.to_dict())
+    print(request.headers.get('Sign'))
     data = request.form.to_dict()
     signature = request.headers.get('Sign')
     
