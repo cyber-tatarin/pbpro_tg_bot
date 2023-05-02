@@ -1,3 +1,5 @@
+import json
+
 from aiohttp import web
 
 from root.prodamus.main import confirm_payment
@@ -14,7 +16,8 @@ logging.basicConfig(
 
 async def handle_post_request(request):
     try:
-        data = await request.json()  # get request body as a json
+        binary_data = await request.read()  # get request body as a json
+        data = json.loads(binary_data.decode())
         signature = str(request.headers.get('Sign'))
     
         logging.info(data)
