@@ -16,7 +16,7 @@ logging.basicConfig(
 async def handle_post_request(request):
     data = await request.post()  # get request body as a multidict
     data_dict = dict(data)  # convert multidict to dict
-    signature = request.headers.get('Sign')
+    signature = str(request.headers.get('Sign'))
     
     logging.info(data_dict)
     logging.info(signature)
@@ -28,6 +28,6 @@ app = web.Application()
 app.add_routes([web.post('/payment', handle_post_request)])
 
 if __name__ == '__main__':
-    web.run_app(app, host='0.0.0.0')
+    web.run_app(app, host='0.0.0.0', port=5000)
 
     
