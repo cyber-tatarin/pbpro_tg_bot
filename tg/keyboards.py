@@ -1,7 +1,7 @@
 import os.path
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import callback_data_models
+from . import callback_data_models
 import sys
 import os
 
