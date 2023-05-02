@@ -7,12 +7,12 @@ from dotenv import load_dotenv, find_dotenv
 from aiogram.types import CallbackQuery
 from aiogram import Bot, Dispatcher, executor, types
 
-import keyboards
-import callback_data_models
-from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
+from root.tg import keyboards
+from root.tg import callback_data_models
+from root.tg.texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
 from root.db import setup as db
 from root.db import models
-import utils
+from root.tg import utils
 
 load_dotenv(find_dotenv())
 

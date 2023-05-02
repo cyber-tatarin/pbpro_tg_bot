@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv, find_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from . import models
+from root.db import models
 load_dotenv(find_dotenv())
 print(os.path.join(os.path.pardir, '.env'))
 

@@ -1,8 +1,6 @@
-import logging
-
 from root.db import setup as db
 from root.db import models
-from .utils import verify_signature
+from root.prodamus.utils import verify_signature
 from root.tg.main import payment_confirmed
 
 import logging

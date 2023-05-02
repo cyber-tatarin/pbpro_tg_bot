@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import callback_data_models
+from root.tg import callback_data_models
 from root.prodamus import utils
 
 
