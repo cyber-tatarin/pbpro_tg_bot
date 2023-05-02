@@ -7,12 +7,15 @@ from dotenv import load_dotenv, find_dotenv
 from aiogram.types import CallbackQuery
 from aiogram import Bot, Dispatcher, executor, types
 
-from root.tg import keyboards
-from root.tg import callback_data_models
-from root.tg.texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
+from keyboards import *
+import callback_data_models
+import utils
+from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
 from root.db import setup as db
 from root.db import models
-from root.tg import utils
+import sys
+
+sys.path.append(os.path.abspath(os.path.pardir))
 
 load_dotenv(find_dotenv())
 
@@ -43,7 +46,7 @@ async def start(message: types.Message):
 async def send_payment_link(message: types.Message, state: FSMContext):
     # link = generate_payment_link(message.text, message.from_user.id)
     await message.answer(PAYMENT_LINK_MESSAGE,
-                         reply_markup=keyboards.get_ikb_to_send_payment_link(message.text, message.from_user.id))
+                         reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
     await state.finish()
 
 
@@ -79,7 +82,7 @@ async def check_task(message: types.Message, state: FSMContext):
     #                                                                            message.message_id))
     # await bot.send_message(ADMIN_ID, '---------------------')
     
-    reply_markup = keyboards.get_ikb_to_check_users_tasks(message.from_user.id)
+    reply_markup = get_ikb_to_check_users_tasks(message.from_user.id)
     await utils.send_and_copy_message(bot, ADMIN_ID, message, message_for_admin, reply_markup)
     await state.finish()
 
@@ -91,7 +94,7 @@ async def accept_task_with_comment(callback_query: CallbackQuery, callback_data:
     receiver_id = callback_data['receiver_id']
     user = await bot.get_chat(receiver_id)
     msg = await callback_query.message.answer(f'Вы приняли решение пользователя {user.full_name}, дайте комментарий',
-                                              reply_markup=keyboards.get_ikb_to_cancel_state())
+                                              reply_markup=get_ikb_to_cancel_state())
     await TaskStates.send_comment_after_accept.set()
     
     state = dp.get_current().current_state()
@@ -108,7 +111,7 @@ async def decline_task_with_comment(callback_query: CallbackQuery, callback_data
     receiver_id = callback_data['receiver_id']
     user = await bot.get_chat(receiver_id)
     msg = await callback_query.message.answer(f'Вы отклонили решение пользователя {user.full_name}, дайте комментарий',
-                                              reply_markup=keyboards.get_ikb_to_cancel_state())
+                                              reply_markup=get_ikb_to_cancel_state())
     await TaskStates.send_comment_after_decline.set()
     
     state = dp.get_current().current_state()
@@ -143,7 +146,7 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
         # await bot.send_message(receiver_id, message_for_client, reply_to_message_id=message_id)
         await bot.send_message(receiver_id, 'Ура, Вы выполнили все задания!')
     else:
-        reply_markup = keyboards.get_ikb_to_get_task(str(task_number))
+        reply_markup = get_ikb_to_get_task(str(task_number))
         await utils.send_and_copy_message(bot, receiver_id, message, message_for_client, reply_markup=reply_markup)
         # await bot.copy_message(chat_id=receiver_id, from_chat_id=message.chat.id, message_id=message.message_id,
         #                        reply_to_message_id=message_id,
@@ -228,7 +231,7 @@ async def payment_confirmed_test(message: types.Message):
             session.close()
     
     await message.answer('Оплата прошла успешно, Вы готовы получить первое задание?',
-                         reply_markup=keyboards.get_ikb_to_get_task('1'))
+                         reply_markup=get_ikb_to_get_task('1'))
 
 
 async def payment_confirmed(user_id):
@@ -244,7 +247,7 @@ async def payment_confirmed(user_id):
             session.close()
     
     await bot.send_message(user_id, 'Оплата прошла успешно, Вы готовы получить первое задание?',
-                           reply_markup=keyboards.get_ikb_to_get_task('1'))
+                           reply_markup=get_ikb_to_get_task('1'))
 
 
 if __name__ == '__main__':

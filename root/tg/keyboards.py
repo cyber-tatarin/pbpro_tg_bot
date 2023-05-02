@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from root.tg import callback_data_models
-from root.prodamus import utils
+import utils
+import callback_data_models
 
 
 def get_ikb_to_get_task(task_number):

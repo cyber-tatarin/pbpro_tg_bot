@@ -2,12 +2,9 @@ import hashlib
 import json
 import hmac
 import os
-import uuid
 from collections.abc import MutableMapping
 from dotenv import load_dotenv, find_dotenv
-from root.db import setup as db
-from root.db import models
-from sqlalchemy.exc import IntegrityError
+
 
 import logging
 
@@ -19,35 +16,6 @@ logging.basicConfig(
 )
 
 load_dotenv(find_dotenv())
-
-
-def generate_payment_link(phone_number, client_tg_id):
-    order_id = str(uuid.uuid4())
-    user = models.User(client_tg_id=client_tg_id, order_id=order_id)
-    session = db.Session()
-    session.add(user)
-    
-    try:
-        session.commit()
-    except IntegrityError:
-        session.rollback()
-        user = session.query(models.User).filter(models.User.client_tg_id == client_tg_id).first()
-        user.order_id = order_id
-        session.commit()
-        
-    if session.is_active:
-        session.close()
-    
-    link = f'https://testpage3.payform.ru/' \
-    f'?order_id={order_id}' \
-    f'&customer_phone={phone_number}' \
-    f'&products[0][price]=2000' \
-    f'&products[0][quantity]=1' \
-    f'&products[0][name]=Обучающие материалы' \
-    f'&customer_extra=Полная оплата курса' \
-    f'&do=pay'
-    
-    return link.replace(' ', '%20')
 
 
 def generate_signature(gen_data):

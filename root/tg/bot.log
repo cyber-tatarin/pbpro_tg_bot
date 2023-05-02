@@ -1,0 +1,35 @@
+2023-05-02 23:10:11,151 - asyncio - DEBUG - Using proactor: IocpProactor
+2023-05-02 23:10:11,156 - aiogram - DEBUG - Make request: "getMe" with data: "{}" and files "None"
+2023-05-02 23:10:11,438 - aiogram - DEBUG - Response for getMe: [200] "'{"ok":true,"result":{"id":5724555976,"is_bot":true,"first_name":"DelphiniaTataBot","username":"project_box_bot","can_join_groups":true,"can_read_all_group_messages":false,"supports_inline_queries":false}}'"
+2023-05-02 23:10:11,438 - aiogram - INFO - Bot: DelphiniaTataBot [@project_box_bot]
+2023-05-02 23:10:11,438 - aiogram - DEBUG - Make request: "getWebhookInfo" with data: "{}" and files "None"
+2023-05-02 23:10:11,526 - aiogram - DEBUG - Response for getWebhookInfo: [200] "'{"ok":true,"result":{"url":"","has_custom_certificate":false,"pending_update_count":1}}'"
+2023-05-02 23:10:11,532 - aiogram - DEBUG - Make request: "deleteWebhook" with data: "{'drop_pending_updates': True}" and files "None"
+2023-05-02 23:10:11,615 - aiogram - DEBUG - Response for deleteWebhook: [200] "'{"ok":true,"result":true,"description":"Webhook is already deleted"}'"
+2023-05-02 23:10:11,615 - aiogram - WARNING - Updates were skipped successfully.
+2023-05-02 23:10:11,615 - aiogram.dispatcher.dispatcher - INFO - Start polling.
+2023-05-02 23:10:11,615 - aiogram - DEBUG - Make request: "getWebhookInfo" with data: "{}" and files "None"
+2023-05-02 23:10:11,701 - aiogram - DEBUG - Response for getWebhookInfo: [200] "'{"ok":true,"result":{"url":"","has_custom_certificate":false,"pending_update_count":0}}'"
+2023-05-02 23:10:11,701 - aiogram - DEBUG - Make request: "getUpdates" with data: "{'timeout': 20}" and files "None"
+2023-05-02 23:10:30,240 - aiogram - DEBUG - Response for getUpdates: [200] "'{"ok":true,"result":[{"update_id":56641724,\n"message":{"message_id":581,"from":{"id":459471362,"is_bot":false,"first_name":"Dima Tatarin","last_name":"RF","username":"dimatatatarin","language_code":"en"},"chat":{"id":459471362,"first_name":"Dima Tatarin","last_name":"RF","username":"dimatatatarin","type":"private"},"date":1683058230,"text":"/start","entities":[{"offset":0,"length":6,"type":"bot_command"}]}}]}'"
+2023-05-02 23:10:30,241 - aiogram.dispatcher.dispatcher - DEBUG - Received 1 updates.
+2023-05-02 23:10:30,242 - aiogram - DEBUG - Make request: "sendMessage" with data: "{'chat_id': 459471362, 'text': '\n\u0414\u043e\u0431\u0440\u043e \u043f\u043e\u0436\u0430\u043b\u043e\u0432\u0430\u0442\u044c! \u0412\u0432\u0435\u0434\u0438\u0442\u0435, \u043f\u043e\u0436\u0430\u043b\u0443\u0439\u0441\u0442\u0430 \u0412\u0430\u0448 \u0442\u0435\u043b\u0435\u0444\u043e\u043d \u0432 \u043c\u0435\u0436\u0434\u0443\u043d\u0430\u0440\u043e\u0434\u043d\u043e\u043c \u0444\u043e\u0440\u043c\u0430\u0442\u0435.\n\u0412\u043e\u0442 \u043d\u0435\u0441\u043a\u043e\u043b\u044c\u043a\u043e \u043f\u0440\u0438\u043c\u0435\u0440\u043e\u0432:\n\n+375297777777\n+74957556983\n\n\u042d\u0442\u043e \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u043e, \u0447\u0442\u043e\u0431\u044b \u0441\u0444\u043e\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043f\u043b\u0430\u0442\u0435\u0436\u043d\u0443\u044e \u0441\u0441\u044b\u043b\u043a\u0443\n'}" and files "None"
+2023-05-02 23:10:30,343 - aiogram - DEBUG - Make request: "getUpdates" with data: "{'offset': 56641725, 'timeout': 20}" and files "None"
+2023-05-02 23:10:30,461 - aiogram - DEBUG - Response for sendMessage: [200] "'{"ok":true,"result":{"message_id":582,"from":{"id":5724555976,"is_bot":true,"first_name":"DelphiniaTataBot","username":"project_box_bot"},"chat":{"id":459471362,"first_name":"Dima Tatarin","last_name":"RF","username":"dimatatatarin","type":"private"},"date":1683058231,"text":"\\u0414\\u043e\\u0431\\u0440\\u043e \\u043f\\u043e\\u0436\\u0430\\u043b\\u043e\\u0432\\u0430\\u0442\\u044c! \\u0412\\u0432\\u0435\\u0434\\u0438\\u0442\\u0435, \\u043f\\u043e\\u0436\\u0430\\u043b\\u0443\\u0439\\u0441\\u0442\\u0430 \\u0412\\u0430\\u0448 \\u0442\\u0435\\u043b\\u0435\\u0444\\u043e\\u043d \\u0432 \\u043c\\u0435\\u0436\\u0434\\u0443\\u043d\\u0430\\u0440\\u043e\\u0434\\u043d\\u043e\\u043c \\u0444\\u043e\\u0440\\u043c\\u0430\\u0442\\u0435.\\n\\u0412\\u043e\\u0442 \\u043d\\u0435\\u0441\\u043a\\u043e\\u043b\\u044c\\u043a\\u043e \\u043f\\u0440\\u0438\\u043c\\u0435\\u0440\\u043e\\u0432:\\n\\n+375297777777\\n+74957556983\\n\\n\\u042d\\u0442\\u043e \\u043d\\u0435\\u043e\\u0431\\u0445\\u043e\\u0434\\u0438\\u043c\\u043e, \\u0447\\u0442\\u043e\\u0431\\u044b \\u0441\\u0444\\u043e\\u0440\\u043c\\u0438\\u0440\\u043e\\u0432\\u0430\\u0442\\u044c \\u043f\\u043b\\u0430\\u0442\\u0435\\u0436\\u043d\\u0443\\u044e \\u0441\\u0441\\u044b\\u043b\\u043a\\u0443","entities":[{"offset":100,"length":13,"type":"phone_number"},{"offset":114,"length":12,"type":"phone_number"}]}}'"
+2023-05-02 23:10:30,461 - aiogram - DEBUG - Make request: "deleteMessage" with data: "{'chat_id': 459471362, 'message_id': 581}" and files "None"
+2023-05-02 23:10:30,666 - aiogram - DEBUG - Response for deleteMessage: [200] "'{"ok":true,"result":true}'"
+2023-05-02 23:10:37,715 - aiogram.dispatcher.dispatcher - INFO - Stop polling...
+2023-05-02 23:10:37,716 - aiogram - WARNING - Goodbye!
+2023-05-02 23:31:35,650 - asyncio - DEBUG - Using proactor: IocpProactor
+2023-05-02 23:33:04,483 - asyncio - DEBUG - Using proactor: IocpProactor
+2023-05-02 23:35:35,390 - asyncio - DEBUG - Using proactor: IocpProactor
+2023-05-02 23:39:22,179 - asyncio - DEBUG - Using proactor: IocpProactor
+2023-05-02 23:39:45,533 - asyncio - DEBUG - Using proactor: IocpProactor
+2023-05-02 23:39:59,582 - asyncio - DEBUG - Using proactor: IocpProactor
+2023-05-02 23:40:10,948 - aiohttp.access - INFO - 127.0.0.1 [02/May/2023:20:40:10 +0000] "GET /payment HTTP/1.1" 405 204 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+2023-05-02 23:40:11,542 - aiohttp.access - INFO - 127.0.0.1 [02/May/2023:20:40:11 +0000] "GET /favicon.ico HTTP/1.1" 404 173 "http://127.0.0.1:8000/payment" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+2023-05-02 23:40:33,483 - aiohttp.access - INFO - 127.0.0.1 [02/May/2023:20:40:33 +0000] "GET /payment HTTP/1.1" 405 204 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+2023-05-02 23:40:35,654 - aiohttp.access - INFO - 127.0.0.1 [02/May/2023:20:40:35 +0000] "GET /payment HTTP/1.1" 405 204 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+2023-05-02 23:40:36,940 - aiohttp.access - INFO - 127.0.0.1 [02/May/2023:20:40:36 +0000] "GET /payment HTTP/1.1" 405 204 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+2023-05-02 23:41:58,260 - asyncio - DEBUG - Using proactor: IocpProactor
+2023-05-02 23:41:59,160 - aiohttp.access - INFO - 127.0.0.1 [02/May/2023:20:41:59 +0000] "GET / HTTP/1.1" 200 159 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"

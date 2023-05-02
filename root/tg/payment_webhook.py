@@ -1,4 +1,3 @@
-import aiohttp
 from aiohttp import web
 
 from root.prodamus.main import confirm_payment
@@ -22,12 +21,17 @@ async def handle_post_request(request):
     logging.info(signature)
     
     await confirm_payment(signature, data_dict)
-    return "payment_received"
+    return web.json_response({}, status=200)
+
+
+async def handle_get_request(request):
+    return web.json_response({}, status=200)
 
 app = web.Application()
 app.add_routes([web.post('/payment', handle_post_request)])
+app.add_routes([web.get('/', handle_get_request)])
 
 if __name__ == '__main__':
-    web.run_app(app, host='0.0.0.0')
+    web.run_app(app, host='127.0.0.1', port=8000)
 
     
