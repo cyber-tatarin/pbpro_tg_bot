@@ -17,13 +17,17 @@ logging.basicConfig(
 async def handle_post_request(request):
     try:
         data = await request.post()
-        data = dict(data)   # get request body as a raw json
+        logging.info(data)  # get request body as a raw json
+
+        raw_data = {key: value for key, value in data.multi_items()}
+        raw_data = json.loads(json.dumps(raw_data))  # remove unnecessary escaping
+        
         signature = str(request.headers.get('Sign'))
     
-        logging.info(data)
+        logging.info(raw_data)
         logging.info(signature)
     
-        await confirm_payment(signature, data)
+        await confirm_payment(signature, raw_data)
         return web.json_response({}, status=200)
     except Exception as x:
         logging.error(x)
