@@ -50,13 +50,12 @@ def generate_payment_link(phone_number, client_tg_id):
     return link.replace(' ', '%20')
 
 
-def generate_signature(data):
-
+def generate_signature(gen_data):
     # переводим все значения data в string c помощью кастомной функции deep_int_to_string (см ниже)
-    deep_int_to_string(data)
+    deep_int_to_string(gen_data)
 
     # переводим data в JSON, с сортировкой ключей в алфавитном порядке, без пробелов и экранируем бэкслеши
-    data_json = json.dumps(data, sort_keys=True, ensure_ascii=False, separators=(',', ':')).replace("/", "\\/")
+    data_json = json.dumps(gen_data, sort_keys=True, ensure_ascii=False, separators=(',', ':')).replace("/", "\\/")
 
     # создаем подпись с помощью библиотеки hmac и возвращаем ее
     # секретный ключ продамуса достаем из окружения
@@ -74,9 +73,11 @@ def deep_int_to_string(dictionary):
             dictionary[key] = str(value)
             
 
-def verify_signature(check_signature, data):
-    benchmark_signature = generate_signature(data)
+def verify_signature(check_signature, check_data):
+    benchmark_signature = generate_signature(check_data)
+    logging.info('benchmark_sign:')
     logging.info(benchmark_signature)
+    logging.info('check_sign:')
     logging.info(check_signature)
     if benchmark_signature == check_signature:
         logging.info('True')
@@ -84,4 +85,8 @@ def verify_signature(check_signature, data):
     else:
         logging.info('False')
         return False
-            
+        
+        
+if __name__ == '__main__':
+    data = {"date":"2023-05-02T20:47:09+03:00","order_id":"12110326","order_num":"1cc7bb02-b277-45ac-9989-e588190d4cc6","domain":"testpage3.payform.ru","sum":"2000.00","currency":"rub","customer_phone":"+375297861654","customer_email":"dmitriyseur@gmail.com","customer_extra":"\u041f\u043e\u043b\u043d\u0430\u044f \u043e\u043f\u043b\u0430\u0442\u0430 \u043a\u0443\u0440\u0441\u0430","payment_type":"\u041e\u043f\u043b\u0430\u0442\u0430 \u043a\u0430\u0440\u0442\u043e\u0439, \u0432\u044b\u043f\u0443\u0449\u0435\u043d\u043d\u043e\u0439 \u0432 \u0420\u0424","commission":"3.5","commission_sum":"70.00","attempt":"3","products":[{"name":"\u041e\u0431\u0443\u0447\u0430\u044e\u0449\u0438\u0435 \u043c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u044b","price":"2000.00","quantity":"1","sum":"2000.00"}],"payment_status":"success","payment_status_description":"\u0423\u0441\u043f\u0435\u0448\u043d\u0430\u044f \u043e\u043f\u043b\u0430\u0442\u0430","payment_init":"manual"}
+    print(generate_signature(data))
