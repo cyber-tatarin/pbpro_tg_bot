@@ -5,6 +5,16 @@ import os
 
 from root.prodamus.main import confirm_payment
 
+import logging
+
+# Set up logging
+logging.basicConfig(
+    filename='bot.log',
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+
 app = Flask(__name__)
 
 
@@ -14,6 +24,10 @@ def payment():
     print("it's post request baby")
     print(request.form.to_dict())
     print(request.headers.get('Sign'))
+    # Log a message
+    logging.info(request.form.to_dict())
+    logging.info(request.headers.get('Sign'))
+    
     data = request.form.to_dict()
     signature = request.headers.get('Sign')
     
