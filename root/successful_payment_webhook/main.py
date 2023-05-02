@@ -3,7 +3,7 @@ import sys
 import json
 import os
 
-from ..prodamus.main import confirm_payment
+from root.prodamus.main import confirm_payment
 
 app = Flask(__name__)
 

@@ -1,8 +1,4 @@
-import sys
 import os
-from pathlib import Path
-sys.path.append(os.path.abspath(Path(__file__).resolve().parent.parent))
-sys.path.append(os.path.abspath(Path(__file__).resolve().parent))
 
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
