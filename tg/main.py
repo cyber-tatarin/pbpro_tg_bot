@@ -8,12 +8,12 @@ from dotenv import load_dotenv, find_dotenv
 from aiogram.types import CallbackQuery, User
 from aiogram import Bot, Dispatcher, executor, types
 
-from . import keyboards
-from . import callback_data_models
-from .texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
+import keyboards
+import callback_data_models
+from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
 from ..db import setup as db
 from ..db import models
-from . import utils
+import utils
 
 load_dotenv(find_dotenv())
 
