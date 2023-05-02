@@ -1,4 +1,7 @@
 import os
+import sys
+
+sys.path.append(os.path.abspath(os.path.pardir))
 
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
@@ -13,9 +16,6 @@ import utils
 from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
 from root.db import setup as db
 from root.db import models
-import sys
-
-sys.path.append(os.path.abspath(os.path.pardir))
 
 load_dotenv(find_dotenv())
 
@@ -214,7 +214,7 @@ async def drop_state(callback_query: CallbackQuery):
     await state.finish()
     await callback_query.message.delete()
     await callback_query.answer('Действие отменено')
-    
+
 
 @dp.message_handler(commands=['gettask'])
 async def payment_confirmed_test(message: types.Message):
