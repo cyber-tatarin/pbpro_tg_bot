@@ -10,7 +10,7 @@ from ..db import models
 from sqlalchemy.exc import IntegrityError
 
 
-load_dotenv(os.path.join(os.path.pardir, '.env'))
+load_dotenv(os.path.join(os.path.abspath(os.path.pardir), '.env'))
 
 
 def generate_payment_link(phone_number, client_tg_id):

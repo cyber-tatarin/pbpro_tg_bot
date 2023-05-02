@@ -15,7 +15,7 @@ from ..db import setup as db
 from ..db import models
 import utils
 
-load_dotenv(os.path.join(os.path.pardir, '.env'))
+load_dotenv(os.path.join(os.path.abspath(os.path.pardir), '.env'))
 
 bot = Bot(os.getenv('TG_API'))
 storage = MemoryStorage()

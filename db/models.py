@@ -12,8 +12,7 @@ from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
 
-load_dotenv(os.path.join(os.path.pardir, '.env'))
-
+load_dotenv(os.path.join(os.path.abspath(os.path.pardir), '.env'))
 
 class Base(DeclarativeBase):
     pass
