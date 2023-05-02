@@ -4,7 +4,7 @@ import os
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from aiogram.types import CallbackQuery, User
 from aiogram import Bot, Dispatcher, executor, types
 
@@ -15,7 +15,7 @@ from ..db import setup as db
 from ..db import models
 import utils
 
-load_dotenv(os.path.join(os.path.abspath(os.path.pardir), '.env'))
+load_dotenv(find_dotenv())
 
 bot = Bot(os.getenv('TG_API'))
 storage = MemoryStorage()

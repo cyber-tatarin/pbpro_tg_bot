@@ -4,13 +4,13 @@ import hmac
 import os
 import uuid
 from collections.abc import MutableMapping
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from ..db import setup as db
 from ..db import models
 from sqlalchemy.exc import IntegrityError
 
 
-load_dotenv(os.path.join(os.path.abspath(os.path.pardir), '.env'))
+load_dotenv(find_dotenv())
 
 
 def generate_payment_link(phone_number, client_tg_id):

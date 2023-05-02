@@ -10,9 +10,10 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 # from sqlalchemy_utils.types.encrypted.encrypted_type import StringEncryptedType, EncryptedType
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-load_dotenv(os.path.join(os.path.abspath(os.path.pardir), '.env'))
+load_dotenv(find_dotenv())
+
 
 class Base(DeclarativeBase):
     pass
