@@ -25,6 +25,7 @@ async def handle_post_request(request):
         await confirm_payment(signature, data)
         return web.json_response({}, status=200)
     except Exception as x:
+        logging.error(x)
         return web.json_response({}, status=403)
 
 
