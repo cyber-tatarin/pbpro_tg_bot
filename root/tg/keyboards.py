@@ -1,7 +1,7 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import callback_data_models
 
-import root.prodamus.utils as utils
+from root.prodamus import utils
 
 
 def get_ikb_to_get_task(task_number):
