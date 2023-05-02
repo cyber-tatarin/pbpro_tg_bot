@@ -1,6 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import callback_data_models
-from prodamus.utils import generate_payment_link
+from ..prodamus.utils import generate_payment_link
 
 
 def get_ikb_to_get_task(task_number):
