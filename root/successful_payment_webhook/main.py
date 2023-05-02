@@ -1,7 +1,5 @@
-from flask import Flask, request
-import sys
-import json
-import os
+import aiohttp
+from aiohttp import web
 
 from root.prodamus.main import confirm_payment
 
@@ -15,35 +13,21 @@ logging.basicConfig(
 )
 
 
-app = Flask(__name__)
-
-
-@app.route('/payment', methods=['POST'])
-async def payment():
-    # Handle the payment data here
-    print("it's post request baby")
-    print(request.form.to_dict())
-    print(request.headers.get('Sign'))
-    # Log a message
-    logging.info(request.form.to_dict())
-    logging.info(request.headers.get('Sign'))
-    
-    data = request.form.to_dict()
+async def handle_post_request(request):
+    data = await request.post()  # get request body as a multidict
+    data_dict = dict(data)  # convert multidict to dict
     signature = request.headers.get('Sign')
     
-    await confirm_payment(signature, data)
+    logging.info(data_dict)
+    logging.info(signature)
     
-    return "Payment received"
+    await confirm_payment(signature, data_dict)
+    return web.json_response(data_dict)
 
-
-@app.route('/', methods=['GET'])
-def go():
-    # Handle the payment data here
-    # Do something with the data
-    print("we've got data in get request", file=sys.stderr)
-    return "Payment received"
-
+app = web.Application()
+app.add_routes([web.post('/payment', handle_post_request)])
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=5000)
+    web.run_app(app, host='0.0.0.0')
+
     
