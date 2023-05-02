@@ -1,7 +1,7 @@
 import db.setup as db
 import db.models as models
 from utils import verify_signature
-from tg.main import payment_confirmed
+from ..tg.main import payment_confirmed
 
 
 def confirm_payment(signature, data):

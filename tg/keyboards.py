@@ -5,7 +5,7 @@ import callback_data_models
 import sys
 import os
 
-from prodamus import utils
+from ..prodamus import utils
 
 
 def get_ikb_to_get_task(task_number):
@@ -32,7 +32,7 @@ def get_ikb_to_check_users_tasks(user_id):
 
 def get_ikb_to_send_payment_link(phone_number, user_id):
     ikb_to_send_payment_link = InlineKeyboardMarkup()
-    link = prodamus.utils.generate_payment_link(phone_number, user_id)
+    link = utils.generate_payment_link(phone_number, user_id)
     b1 = InlineKeyboardButton(text='Оплатить', url=link)
     ikb_to_send_payment_link.add(b1)
     return ikb_to_send_payment_link

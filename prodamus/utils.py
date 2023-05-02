@@ -5,8 +5,8 @@ import os
 import uuid
 from collections.abc import MutableMapping
 from dotenv import load_dotenv
-from db import setup as db
-from db import models
+from ..db import setup as db
+from ..db import models
 from sqlalchemy.exc import IntegrityError
 
 
