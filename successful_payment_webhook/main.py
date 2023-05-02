@@ -4,7 +4,7 @@ import json
 import os
 
 sys.path.append(os.path.abspath(os.path.pardir))
-from prodamus.main import confirm_payment
+import prodamus.main
 
 
 app = Flask(__name__)
@@ -19,7 +19,7 @@ def payment():
     data = request.form.to_dict()
     signature = request.headers.get('Sign')
     
-    confirm_payment(signature, data)
+    prodamus.main.confirm_payment(signature, data)
     
     return "Payment received"
 
