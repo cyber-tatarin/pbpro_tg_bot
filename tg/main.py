@@ -10,7 +10,7 @@ from aiogram import Bot, Dispatcher, executor, types
 
 from . import keyboards
 from . import callback_data_models
-from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
+from .texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
 from ..db import setup as db
 from ..db import models
 from . import utils
