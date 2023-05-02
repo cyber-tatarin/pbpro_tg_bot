@@ -9,6 +9,14 @@ from root.db import setup as db
 from root.db import models
 from sqlalchemy.exc import IntegrityError
 
+import logging
+
+# Set up logging
+logging.basicConfig(
+    filename='bot.log',
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 load_dotenv(find_dotenv())
 
@@ -68,8 +76,12 @@ def deep_int_to_string(dictionary):
 
 def verify_signature(check_signature, data):
     benchmark_signature = generate_signature(data)
+    logging.info(benchmark_signature)
+    logging.info(check_signature)
     if benchmark_signature == check_signature:
+        logging.info('True')
         return True
     else:
+        logging.info('False')
         return False
             

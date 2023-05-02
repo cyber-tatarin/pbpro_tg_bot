@@ -22,7 +22,7 @@ async def handle_post_request(request):
     logging.info(signature)
     
     await confirm_payment(signature, data_dict)
-    return web.json_response(data_dict)
+    return "payment_received"
 
 app = web.Application()
 app.add_routes([web.post('/payment', handle_post_request)])
