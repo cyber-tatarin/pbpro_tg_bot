@@ -21,6 +21,7 @@ async def confirm_payment(signature, data):
         user = session.query(models.User).filter(models.User.order_id == data['order_num']).first()
         user.have_paid = True
         session.commit()
+        session.refresh(user)
         if session.is_active:
             session.close()
         await payment_confirmed(user.client_tg_id)
