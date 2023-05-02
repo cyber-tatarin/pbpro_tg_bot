@@ -32,6 +32,6 @@ app.add_routes([web.post('/payment', handle_post_request)])
 app.add_routes([web.get('/', handle_get_request)])
 
 if __name__ == '__main__':
-    web.run_app(app, host='127.0.0.1', port=8000)
+    web.run_app(app, host='0.0.0.0')
 
     
