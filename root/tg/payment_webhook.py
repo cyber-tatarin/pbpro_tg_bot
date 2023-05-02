@@ -13,15 +13,17 @@ logging.basicConfig(
 
 
 async def handle_post_request(request):
-    data = await request.post()  # get request body as a multidict
-    data_dict = dict(data)  # convert multidict to dict
-    signature = str(request.headers.get('Sign'))
+    try:
+        data = await request.json()  # get request body as a json
+        signature = str(request.headers.get('Sign'))
     
-    logging.info(data_dict)
-    logging.info(signature)
+        logging.info(data)
+        logging.info(signature)
     
-    await confirm_payment(signature, data_dict)
-    return web.json_response({}, status=200)
+        await confirm_payment(signature, data)
+        return web.json_response({}, status=200)
+    except Exception as x:
+        return web.json_response({}, status=403)
 
 
 async def handle_get_request(request):
