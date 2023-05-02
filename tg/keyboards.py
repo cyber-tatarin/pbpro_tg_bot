@@ -5,7 +5,7 @@ import callback_data_models
 import sys
 import os
 
-from ..prodamus import utils
+from prodamus import utils
 
 
 def get_ikb_to_get_task(task_number):
