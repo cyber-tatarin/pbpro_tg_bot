@@ -87,6 +87,44 @@ async def check_task(message: types.Message, state: FSMContext):
     await state.finish()
 
 
+@dp.callback_query_handler(callback_data_models.accept_task_cb_data.filter())
+async def accept_task(callback_query: CallbackQuery, callback_data: dict):
+    receiver_id = callback_data['receiver_id']
+    
+    session = db.Session()
+    task = session.query(models.Task).filter(models.Task.client_tg_id == receiver_id).first()
+    task.current_task += 1
+    task_number = task.current_task
+    session.commit()
+    if session.is_active:
+        session.close()
+    
+    if task_number > len(TASKS):
+        await bot.send_message(receiver_id, 'Ваше задание приняли!')
+        # await bot.send_message(receiver_id, message_for_client, reply_to_message_id=message_id)
+        await bot.send_message(receiver_id, 'Ура, Вы выполнили все задания!')
+    else:
+        reply_markup = get_ikb_to_get_task(str(task_number))
+        await bot.send_message(receiver_id, 'Ваше задание приняли! Вы готовы выполнить следующее?')
+        # await bot.copy_message(chat_id=receiver_id, from_chat_id=message.chat.id, message_id=message.message_id,
+        #                        reply_to_message_id=message_id,
+        #                        reply_markup=keyboards.get_ikb_to_get_task(str(task_number)))
+
+    await bot.edit_message_reply_markup(ADMIN_ID, callback_query.message.message_id, reply_markup=None)
+    await callback_query.answer(cache_time=0)
+
+
+@dp.callback_query_handler(callback_data_models.accept_task_cb_data.filter())
+async def decline_task_task(callback_query: CallbackQuery, callback_data: dict):
+    receiver_id = callback_data['receiver_id']
+    
+    await bot.send_message(receiver_id, 'Ваше задание не приняли, комментарий не дали. '
+                                        'Мы хотим, чтобы Вы подумали сами :)',
+                           reply_markup=get_ikb_to_resend_declined_answer())
+    await bot.edit_message_reply_markup(ADMIN_ID, reply_markup=None)
+    await callback_query.answer(cache_time=0)
+    
+
 @dp.callback_query_handler(callback_data_models.accept_task_with_comment_cb_data.filter())
 async def accept_task_with_comment(callback_query: CallbackQuery, callback_data: dict):
     print('inside')
@@ -100,7 +138,8 @@ async def accept_task_with_comment(callback_query: CallbackQuery, callback_data:
     state = dp.get_current().current_state()
     await state.update_data(receiver_id=receiver_id,
                             cancel_message=msg['message_id'],
-                            chat_id=msg['chat']['id'])
+                            chat_id=msg['chat']['id'],
+                            answer_message=callback_query.message.message_id)
     await callback_query.answer(cache_time=0)
 
 
@@ -117,7 +156,8 @@ async def decline_task_with_comment(callback_query: CallbackQuery, callback_data
     state = dp.get_current().current_state()
     await state.update_data(receiver_id=receiver_id,
                             cancel_message=msg['message_id'],
-                            chat_id=msg['chat']['id'])
+                            chat_id=msg['chat']['id'],
+                            answer_message=callback_query.message.message_id)
     await callback_query.answer(cache_time=0)
 
 
@@ -129,6 +169,7 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
     receiver_id = data['receiver_id']
     cancel_message_id = data['cancel_message']
     chat_id = data['chat_id']
+    answer_message_id = data['answer_message']
     await bot.delete_message(chat_id, cancel_message_id)
     
     session = db.Session()
@@ -151,6 +192,8 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
         # await bot.copy_message(chat_id=receiver_id, from_chat_id=message.chat.id, message_id=message.message_id,
         #                        reply_to_message_id=message_id,
         #                        reply_markup=keyboards.get_ikb_to_get_task(str(task_number)))
+
+    await bot.edit_message_reply_markup(ADMIN_ID, answer_message_id, reply_markup=None)
     
     await state.finish()
 
@@ -163,16 +206,20 @@ async def send_comment_after_decline(message: types.Message, state: FSMContext):
     receiver_id = data['receiver_id']
     cancel_message_id = data['cancel_message']
     chat_id = data['chat_id']
+    answer_message_id = data['answer_message']
     await bot.delete_message(chat_id, cancel_message_id)
     
     message_for_client = f'Ваше решение не приняли. Вот ответ от Вашего ментора:'
     
-    await utils.send_and_copy_message(bot, receiver_id, message, message_for_client)
-    # await bot.send_message(receiver_id, message_for_client, reply_to_message_id=message_id)
-    await bot.send_message(receiver_id, 'Следующим сообщением отправьте, пожалуйста, новое решение')
+    await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
+                                      reply_markup=get_ikb_to_resend_declined_answer(), divider=False)
     
-    receiver_state = dp.current_state(user=receiver_id)
-    await receiver_state.set_state(TaskStates.task_is_done.state)
+    await bot.edit_message_reply_markup(ADMIN_ID, answer_message_id, reply_markup=None)
+    
+    # await bot.send_message(receiver_id, message_for_client, reply_to_message_id=message_id)
+    
+    # receiver_state = dp.current_state(user=receiver_id)
+    # await receiver_state.set_state(TaskStates.task_is_done.state)
     
     # await utils.send_and_copy_message(bot, receiver_id, message, message_for_client, reply_markup=reply_markup)
     # await bot.copy_message(chat_id=receiver_id, from_chat_id=message.chat.id, message_id=message.message_id,
@@ -180,6 +227,12 @@ async def send_comment_after_decline(message: types.Message, state: FSMContext):
     #                        reply_markup=keyboards.get_ikb_to_get_task(str(task_number)))
     
     await state.finish()
+
+
+@dp.callback_query_handler(lambda c: c.data == 'resend_declined_answer')
+async def send_payment_link(callback_query: CallbackQuery):
+    await callback_query.message.edit_reply_markup(reply_markup=None)
+    await TaskStates.task_is_done.set()
 
 
 @dp.callback_query_handler(lambda c: c.data == 'send_payment_link')
@@ -216,22 +269,22 @@ async def drop_state(callback_query: CallbackQuery):
     await callback_query.answer('Действие отменено')
 
 
-@dp.message_handler(commands=['gettask'])
-async def payment_confirmed_test(message: types.Message):
-    task = models.Task(client_tg_id=message.from_user.id, current_task=1)
-    session = db.Session()
-    print('gogo')
-    try:
-        session.add(task)
-        session.commit()
-    except Exception as x:
-        print(x)
-    finally:
-        if session.is_active:
-            session.close()
-    
-    await message.answer('Оплата прошла успешно, Вы готовы получить первое задание?',
-                         reply_markup=get_ikb_to_get_task('1'))
+# @dp.message_handler(commands=['gettask'])
+# async def payment_confirmed_test(message: types.Message):
+#     task = models.Task(client_tg_id=message.from_user.id, current_task=1)
+#     session = db.Session()
+#     print('gogo')
+#     try:
+#         session.add(task)
+#         session.commit()
+#     except Exception as x:
+#         print(x)
+#     finally:
+#         if session.is_active:
+#             session.close()
+#
+#     await message.answer('Оплата прошла успешно, Вы готовы получить первое задание?',
+#                          reply_markup=get_ikb_to_get_task('1'))
 
 
 async def payment_confirmed(user_id):

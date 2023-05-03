@@ -39,3 +39,11 @@ def get_ikb_to_cancel_state():
                               callback_data='drop_state')
     ikb_to_drop_state.add(b1)
     return ikb_to_drop_state
+
+
+def get_ikb_to_resend_declined_answer():
+    ikb_to_resend_declined_answer = InlineKeyboardMarkup()
+    b1 = InlineKeyboardButton(text='Попробовать еще раз',
+                              callback_data='resend_declined_answer')
+    ikb_to_resend_declined_answer.add(b1)
+    return ikb_to_resend_declined_answer
