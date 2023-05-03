@@ -105,7 +105,8 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
         await bot.send_message(receiver_id, 'Ура, Вы выполнили все задания!')
     else:
         reply_markup = get_ikb_to_get_task(str(task_number))
-        await bot.send_message(receiver_id, 'Ваше задание приняли! Вы готовы выполнить следующее?')
+        await bot.send_message(receiver_id, 'Ваше задание приняли! Вы готовы выполнить следующее?',
+                               reply_markup=reply_markup)
         # await bot.copy_message(chat_id=receiver_id, from_chat_id=message.chat.id, message_id=message.message_id,
         #                        reply_to_message_id=message_id,
         #                        reply_markup=keyboards.get_ikb_to_get_task(str(task_number)))
@@ -114,7 +115,7 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
     await callback_query.answer(cache_time=0)
 
 
-@dp.callback_query_handler(callback_data_models.accept_task_cb_data.filter())
+@dp.callback_query_handler(callback_data_models.decline_task_cb_data.filter())
 async def decline_task_task(callback_query: CallbackQuery, callback_data: dict):
     receiver_id = callback_data['receiver_id']
     
