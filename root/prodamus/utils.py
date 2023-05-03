@@ -5,19 +5,13 @@ import os
 from collections.abc import MutableMapping
 from dotenv import load_dotenv, find_dotenv
 
+from root.logger.log import logger
 
-import logging
-
-# Set up logging
-logging.basicConfig(
-    filename='bot.log',
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
 
 load_dotenv(find_dotenv())
 
 
+@logger.catch
 def generate_signature(gen_data):
     # переводим все значения data в string c помощью кастомной функции deep_int_to_string (см ниже)
     deep_int_to_string(gen_data)
@@ -25,8 +19,6 @@ def generate_signature(gen_data):
     # переводим data в JSON, с сортировкой ключей в алфавитном порядке, без пробелов и экранируем бэкслеши
     data_json = json.dumps(gen_data, sort_keys=True, ensure_ascii=False, separators=(',', ':')).replace("/", "\\/")
     print(data_json)
-    logging.info('data_json')
-    logging.info(data_json)
     # создаем подпись с помощью библиотеки hmac и возвращаем ее
     # секретный ключ продамуса достаем из окружения
     return hmac.new(os.getenv('PRODAMUS_SECRET_KEY').encode('utf8'), data_json.encode('utf8'), hashlib.sha256).hexdigest()
@@ -43,17 +35,18 @@ def deep_int_to_string(dictionary):
             dictionary[key] = str(value)
             
 
+@logger.catch
 def verify_signature(check_signature, check_data):
     benchmark_signature = generate_signature(check_data)
-    logging.info('benchmark_sign:')
-    logging.info(benchmark_signature)
-    logging.info('check_sign:')
-    logging.info(check_signature)
+    logger.info('benchmark_sign:')
+    logger.info(benchmark_signature)
+    logger.info('check_sign:')
+    logger.info(check_signature)
     if benchmark_signature == check_signature:
-        logging.info('True')
+        logger.info('Signatures are equal')
         return True
     else:
-        logging.info('False')
+        logger.info('Signatures are not equal')
         return False
         
         

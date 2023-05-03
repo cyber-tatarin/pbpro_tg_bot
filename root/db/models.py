@@ -12,6 +12,7 @@ from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv, find_dotenv
 
+
 load_dotenv(find_dotenv())
 
 
@@ -22,7 +23,7 @@ class Base(DeclarativeBase):
 class Task(Base):
     __tablename__ = "tasks"
     
-    client_tg_id = Column("slient_tg_id", String(10), primary_key=True)
+    client_tg_id = Column("client_tg_id", String(10), primary_key=True)
     current_task = Column("current_task", Integer)
     
 

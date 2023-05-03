@@ -4,15 +4,24 @@ from dotenv import load_dotenv, find_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from root.db import models
+from root.logger.log import get_logger
+
+
 load_dotenv(find_dotenv())
-print(os.path.join(os.path.pardir, '.env'))
+logger = get_logger()
 
-engine = create_engine(f'{os.getenv("DB_ENGINE")}://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}/{os.getenv("DB_NAME")}')
-
-Session = sessionmaker(bind=engine)
+with logger.catch():
+    engine = create_engine(f'{os.getenv("DB_ENGINE")}://{os.getenv("DB_USER")}:{os.getenv("DB_PASSWORD")}@{os.getenv("DB_HOST")}/{os.getenv("DB_NAME")}')
+    
+with logger.catch():
+    Session = sessionmaker(bind=engine)
 
 if __name__ == '__main__':
-    models.User.__table__.create(engine)
-    models.State.__table__.create(engine)
-    models.Task.__table__.create(engine)
+    # models.User.__table__.create(engine)
+    # models.State.__table__.create(engine)
+    # models.Task.__table__.create(engine)
+    
+    models.User.__table__.drop(engine)
+    models.Task.__table__.drop(engine)
+    models.State.__table__.drop(engine)
     

@@ -1,8 +1,12 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import utils
 import callback_data_models
+from root.logger.log import get_logger
+
+logger = get_logger()
 
 
+@logger.catch
 def get_ikb_to_get_task(task_number):
     ikb_to_get_task = InlineKeyboardMarkup(row_width=1)
     b1 = InlineKeyboardButton(text=f'Получить задание #{task_number}',
@@ -11,6 +15,7 @@ def get_ikb_to_get_task(task_number):
     return ikb_to_get_task
 
 
+@logger.catch
 def get_ikb_to_check_users_tasks(user_id):
     ikb_to_check_users_tasks = InlineKeyboardMarkup(row_width=1)
     b1 = InlineKeyboardButton(text='Принять решение и дать комментарий',
@@ -25,6 +30,7 @@ def get_ikb_to_check_users_tasks(user_id):
     return ikb_to_check_users_tasks
 
 
+@logger.catch
 def get_ikb_to_send_payment_link(phone_number, user_id):
     ikb_to_send_payment_link = InlineKeyboardMarkup()
     link = utils.generate_payment_link(phone_number, user_id)
@@ -33,6 +39,7 @@ def get_ikb_to_send_payment_link(phone_number, user_id):
     return ikb_to_send_payment_link
 
 
+@logger.catch
 def get_ikb_to_cancel_state():
     ikb_to_drop_state = InlineKeyboardMarkup(row_width=1)
     b1 = InlineKeyboardButton(text='Отменить',
@@ -41,6 +48,7 @@ def get_ikb_to_cancel_state():
     return ikb_to_drop_state
 
 
+@logger.catch
 def get_ikb_to_resend_declined_answer():
     ikb_to_resend_declined_answer = InlineKeyboardMarkup()
     b1 = InlineKeyboardButton(text='Попробовать еще раз',
