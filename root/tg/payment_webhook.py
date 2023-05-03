@@ -87,7 +87,6 @@ async def fail(request):
 
 @logger.catch
 async def handle_get_request(request):
-    raise Exception('goooo')
     return web.json_response({}, status=200)
 
 app = web.Application()
