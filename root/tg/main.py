@@ -272,8 +272,9 @@ async def payment_confirmed(user_id):
         except IntegrityError as x:
             await bot.send_message(user_id, 'Вы уже получили задание')
         except Exception as x:
+            logger.error(x)
             await bot.send_message(user_id, 'У нас возникли проблемы с базой данных. Если Вы видите это сообщение,'
-                                            'напишите мне @dimatatatarin')
+                                            'напишите, пожалуйста, мне @dimatatatarin')
         finally:
             if session.is_active:
                 session.close()
