@@ -3,6 +3,10 @@ from root.db import models
 from sqlalchemy.exc import IntegrityError
 import uuid
 
+from root.logger.log import get_logger
+
+logger = get_logger()
+
 
 async def send_and_copy_message(bot, receiver_id, message, extra_message, reply_markup=None, divider=True):
     await bot.send_message(receiver_id, extra_message)
@@ -13,6 +17,7 @@ async def send_and_copy_message(bot, receiver_id, message, extra_message, reply_
         await bot.send_message(receiver_id, '------------------------------------')
 
 
+@logger.catch
 def generate_payment_link(phone_number, client_tg_id):
     order_id = str(uuid.uuid4())
     user = models.User(client_tg_id=client_tg_id, order_id=order_id)
@@ -38,5 +43,5 @@ def generate_payment_link(phone_number, client_tg_id):
            f'&products[0][name]=Марафон "Деньги в строительстве"' \
            f'&customer_extra=Полная оплата марафона' \
            f'&do=pay'
-    
+
     return link.replace(' ', '%20')
