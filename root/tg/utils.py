@@ -30,13 +30,13 @@ def generate_payment_link(phone_number, client_tg_id):
     if session.is_active:
         session.close()
     
-    link = f'https://testpage3.payform.ru/' \
+    link = f'https://pbacademy.payform.ru/' \
            f'?order_id={order_id}' \
            f'&customer_phone={phone_number}' \
-           f'&products[0][price]=2000' \
+           f'&products[0][price]=800' \
            f'&products[0][quantity]=1' \
-           f'&products[0][name]=Обучающие материалы' \
-           f'&customer_extra=Полная оплата курса' \
+           f'&products[0][name]=Марафон "Деньги в строительстве"' \
+           f'&customer_extra=Полная оплата марафона' \
            f'&do=pay'
     
     return link.replace(' ', '%20')

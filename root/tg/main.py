@@ -16,7 +16,7 @@ from aiogram.utils.exceptions import ChatNotFound
 from keyboards import *
 import callback_data_models
 import utils
-from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE
+from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE, GET_PAYMENT_LINK_MANUALLY
 from root.db import setup as db
 from root.db import models
 
@@ -44,6 +44,14 @@ class TaskStates(StatesGroup):
 @dp.message_handler(state='*', commands=['start'])
 async def start(message: types.Message):
     await message.answer(WELCOME_MESSAGE)
+    await message.delete()
+    await TaskStates.input_phone_number.set()
+
+
+@logger.catch
+@dp.message_handler(state='*', commands=['getpaymentlink'])
+async def send_payment_link_manually(message: types.Message):
+    await message.answer(GET_PAYMENT_LINK_MANUALLY)
     await message.delete()
     await TaskStates.input_phone_number.set()
 
@@ -181,11 +189,13 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
     message_for_client = f'Вот ответ от Вашего ментора:'
     
     if task_number > len(TASKS):
-        await utils.send_and_copy_message(bot, receiver_id, message, message_for_client)
+        await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
+                                          divider=False)
         await bot.send_message(receiver_id, 'Ура, Вы выполнили все задания!')
     else:
         reply_markup = get_ikb_to_get_task(str(task_number))
-        await utils.send_and_copy_message(bot, receiver_id, message, message_for_client, reply_markup=reply_markup)
+        await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
+                                          reply_markup=reply_markup, divider=False)
     
     await bot.edit_message_reply_markup(ADMIN_ID, answer_message_id, reply_markup=None)
     await state.finish()
@@ -213,7 +223,7 @@ async def send_comment_after_decline(message: types.Message, state: FSMContext):
 
 @logger.catch
 @dp.callback_query_handler(lambda c: c.data == 'resend_declined_answer')
-async def send_payment_link(callback_query: CallbackQuery):
+async def resend_declined_answer(callback_query: CallbackQuery):
     await callback_query.message.edit_reply_markup(reply_markup=None)
     await TaskStates.task_is_done.set()
 

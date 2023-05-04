@@ -1,4 +1,5 @@
 .env
-test
+test.py
 __pycache__
-bot
+bot.log
+gsheets_key.json
