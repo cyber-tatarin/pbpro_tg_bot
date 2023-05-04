@@ -49,21 +49,13 @@ async def start(message: types.Message):
 
 
 @logger.catch
-@dp.message_handler(state='*', commands=['getpaymentlink'])
-async def send_payment_link_manually(message: types.Message):
-    await message.answer(GET_PAYMENT_LINK_MANUALLY)
-    await message.delete()
-    await TaskStates.input_phone_number.set()
-
-
-@logger.catch
 @dp.message_handler(state=TaskStates.input_phone_number)
 async def send_payment_link(message: types.Message, state: FSMContext):
     await message.answer(PAYMENT_LINK_MESSAGE,
                          reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
     await state.finish()
-
-
+    
+    
 @logger.catch
 @dp.callback_query_handler(callback_data_models.send_task_cb_data.filter())
 async def send_task(callback_query: CallbackQuery, callback_data: dict):
@@ -264,6 +256,14 @@ async def check_payment_command(message: types.Message):
             await message.answer(answer_message)
     except Exception as x:
         await message.answer(answer_message)
+        
+        
+@logger.catch
+@dp.message_handler(state='*', commands=['getpaymentlink'])
+async def send_payment_link_manually(message: types.Message):
+    await message.answer(GET_PAYMENT_LINK_MANUALLY)
+    await message.delete()
+    await TaskStates.input_phone_number.set()
 
 
 @logger.catch
