@@ -301,12 +301,13 @@ async def backup_user_states():
     try:
         for user_id, state_dict in await storage.get_data():
             task = models.Task(client_tg_id=user_id, current_state=state_dict['state'])
-            await session.add(task)
-        await session.commit()
-        if session.is_active:
-            await session.close()
+            session.add(task)
+        session.commit()
     except Exception as x:
         logger.error(x)
+    finally:
+        if session.is_active:
+            session.close()
 
 
 # Define a function to restore the user states from the database
@@ -315,12 +316,13 @@ async def restore_user_states():
     try:
         for row in session.query(models.State).all():
             await storage.set_state(user=row.client_tg_id, state=row.current_state)
-        await session.query(models.State).delete()
-        await session.commit()
-        if session.is_active:
-            await session.close()
+        session.query(models.State).delete()
+        session.commit()
     except Exception as x:
         logger.error(x)
+    finally:
+        if session.is_active:
+            session.close()
 
 
 async def on_startup(_):
