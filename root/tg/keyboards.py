@@ -32,8 +32,10 @@ def get_ikb_to_check_users_tasks(user_id):
 
 @logger.catch
 def get_ikb_to_send_payment_link(phone_number, user_id):
+    logger.info('inside send pm link')
     ikb_to_send_payment_link = InlineKeyboardMarkup()
     link = utils.generate_payment_link(phone_number, user_id)
+    logger.info('after creating link')
     b1 = InlineKeyboardButton(text='Оплатить', url=link)
     ikb_to_send_payment_link.add(b1)
     return ikb_to_send_payment_link

@@ -53,8 +53,11 @@ async def start(message: types.Message):
 @dp.message_handler(state=TaskStates.input_phone_number)
 async def send_payment_link(message: types.Message, state: FSMContext):
     logger.debug('send_link')
-    await message.answer(PAYMENT_LINK_MESSAGE,
+    try:
+        await message.answer(PAYMENT_LINK_MESSAGE,
                          reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
+    except Exception as x:
+        logger.error(x)
     await state.finish()
     
     

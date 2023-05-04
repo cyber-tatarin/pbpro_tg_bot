@@ -23,7 +23,7 @@ def generate_payment_link(phone_number, client_tg_id):
     user = models.User(client_tg_id=client_tg_id, order_id=order_id)
     session = db.Session()
     session.add(user)
-    
+    logger.info('getting session')
     try:
         session.commit()
     except IntegrityError:
@@ -31,7 +31,7 @@ def generate_payment_link(phone_number, client_tg_id):
         user = session.query(models.User).filter(models.User.client_tg_id == client_tg_id).first()
         user.order_id = order_id
         session.commit()
-    
+    logger.info('after db created')
     if session.is_active:
         session.close()
     
@@ -43,5 +43,5 @@ def generate_payment_link(phone_number, client_tg_id):
            f'&products[0][name]=Марафон "Деньги в строительстве"' \
            f'&customer_extra=Полная оплата марафона' \
            f'&do=pay'
-
+    logger.info('link is created')
     return link.replace(' ', '%20')
