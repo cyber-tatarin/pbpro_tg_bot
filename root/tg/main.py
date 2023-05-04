@@ -78,7 +78,7 @@ async def start(message: types.Message):
     await message.answer(WELCOME_MESSAGE)
     await message.delete()
     await TaskStates.input_phone_number.set()
-    await save_state_into_db(message.from_user.id, 'input_phone_number')
+    await save_state_into_db(message.from_user.id, 'TaskStates:input_phone_number')
     logger.debug(storage.data)
 
 
@@ -104,7 +104,7 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
     
     await callback_query.message.edit_reply_markup(reply_markup=None)
     
-    await save_state_into_db(callback_query.from_user.id, 'task_is_done')
+    await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
     await callback_query.answer(cache_time=0)
 
 
@@ -259,7 +259,7 @@ async def send_comment_after_decline(message: types.Message, state: FSMContext):
 async def resend_declined_answer(callback_query: CallbackQuery):
     await callback_query.message.edit_reply_markup(reply_markup=None)
     await TaskStates.task_is_done.set()
-    await save_state_into_db(callback_query.from_user.id, 'task_is_done')
+    await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
 
 
 @logger.catch
@@ -309,7 +309,7 @@ async def send_payment_link_manually(message: types.Message):
     await message.answer(GET_PAYMENT_LINK_MANUALLY)
     await message.delete()
     await TaskStates.input_phone_number.set()
-    await save_state_into_db(message.from_user.id, 'input_phone_number')
+    await save_state_into_db(message.from_user.id, 'TaskStates:input_phone_number')
 
 
 @logger.catch
