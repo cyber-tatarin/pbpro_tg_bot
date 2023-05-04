@@ -12,6 +12,7 @@ from dotenv import load_dotenv, find_dotenv
 from aiogram.types import CallbackQuery
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import ChatNotFound
+from sqlalchemy.orm import sessionmaker
 
 from keyboards import *
 import callback_data_models
@@ -28,6 +29,7 @@ load_dotenv(find_dotenv())
 
 bot = Bot(os.getenv('TG_API'))
 storage = MemoryStorage()
+
 dp = Dispatcher(bot=bot, storage=storage)
 
 ADMIN_ID = 459471362
@@ -43,7 +45,6 @@ class TaskStates(StatesGroup):
 @logger.catch
 @dp.message_handler(state='*', commands=['start'])
 async def start(message: types.Message):
-
     await message.answer(WELCOME_MESSAGE)
     await message.delete()
     await TaskStates.input_phone_number.set()
@@ -52,15 +53,14 @@ async def start(message: types.Message):
 @logger.catch
 @dp.message_handler(state=TaskStates.input_phone_number)
 async def send_payment_link(message: types.Message, state: FSMContext):
-
     try:
         await message.answer(PAYMENT_LINK_MESSAGE,
-                         reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
+                             reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
     except Exception as x:
         logger.error(x)
     await state.finish()
-    
-    
+
+
 @logger.catch
 @dp.callback_query_handler(callback_data_models.send_task_cb_data.filter())
 async def send_task(callback_query: CallbackQuery, callback_data: dict):
@@ -237,7 +237,6 @@ async def drop_state(callback_query: CallbackQuery):
 @logger.catch
 @dp.message_handler(state='*', commands=['help'])
 async def help_command(message: types.Message):
-
     await message.delete()
     await message.answer('Если Вы столкнулись с проблемой, напишите мне @dimatatatarin. Мы все решим :)')
     await message.answer(f'Вот Ваш ID:')
@@ -262,12 +261,11 @@ async def check_payment_command(message: types.Message):
             await message.answer(answer_message)
     except Exception as x:
         await message.answer(answer_message)
-        
-        
+
+
 @logger.catch
 @dp.message_handler(state='*', commands=['getpaymentlink'])
 async def send_payment_link_manually(message: types.Message):
-
     await message.answer(GET_PAYMENT_LINK_MANUALLY)
     await message.delete()
     await TaskStates.input_phone_number.set()
@@ -284,7 +282,7 @@ async def payment_confirmed(user_id):
             session.commit()
             await bot.send_message(user_id, 'Оплата прошла успешно, Вы готовы получить первое задание?',
                                    reply_markup=get_ikb_to_get_task('1'))
-            
+        
         except IntegrityError as x:
             await bot.send_message(user_id, 'Вы уже получили задание')
         except Exception as x:
@@ -296,8 +294,39 @@ async def payment_confirmed(user_id):
                 session.close()
     except ChatNotFound:
         pass
-    
-        
+
+
+async def backup_user_states():
+    async with storage:
+        async with db.Session as session:
+            for user_id, state_dict in await storage.get_data():
+                task = models.Task(client_tg_id=user_id, current_state=state_dict['state'])
+                await session.add(task)
+            await session.commit()
+            if session.is_active:
+                await session.close()
+
+
+# Define a function to restore the user states from the database
+async def restore_user_states():
+    async with storage:
+        async with db.Session as session:
+            for row in session.query(models.State).all():
+                await storage.set_state(user=row.client_tg_id, state=row.current_state)
+            await session.query(models.State).delete()
+            await session.commit()
+            if session.is_active:
+                await session.close()
+
+
+async def on_startup(_):
+    await restore_user_states()
+
+
+async def on_shutdown(_):
+    await backup_user_states()
+
+
 if __name__ == '__main__':
     with logger.catch():
-        executor.start_polling(dispatcher=dp, skip_updates=True)
+        executor.start_polling(dispatcher=dp, skip_updates=True, on_startup=on_startup, on_shutdown=on_shutdown)
