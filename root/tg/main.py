@@ -42,12 +42,43 @@ class TaskStates(StatesGroup):
     send_comment_after_decline = State()
 
 
+async def save_state_into_db(user_id, state):
+    session = db.Session()
+    try:
+        state = models.State(client_tg_id=user_id, current_state=state)
+        session.add(state)
+        session.commit()
+    except IntegrityError:
+        session.refresh()
+        existing_state = session.query(models.State).filter(models.State.client_tg_id==user_id).first()
+        existing_state.current_state = state
+    except Exception as x:
+        logger.error(x)
+    finally:
+        if session.is_active:
+            session.close()
+        
+        
+async def delete_state_from_db(user_id):
+    session = db.Session()
+    try:
+        existing_state = session.query(models.State).filter(models.State.client_tg_id==user_id).first()
+        session.delete(existing_state)
+        session.commit()
+    except Exception as x:
+        logger.error(x)
+    finally:
+        if session.is_active:
+            session.close()
+        
+
 @logger.catch
 @dp.message_handler(state='*', commands=['start'])
 async def start(message: types.Message):
     await message.answer(WELCOME_MESSAGE)
     await message.delete()
     await TaskStates.input_phone_number.set()
+    await save_state_into_db(message.from_user.id, 'input_phone_number')
 
 
 @logger.catch
@@ -59,6 +90,7 @@ async def send_payment_link(message: types.Message, state: FSMContext):
     except Exception as x:
         logger.error(x)
     await state.finish()
+    await delete_state_from_db(message.from_user.id)
 
 
 @logger.catch
@@ -68,8 +100,10 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
     
     await bot.send_message(callback_query.from_user.id, TASKS[task_number])
     await TaskStates.task_is_done.set()
+    
     await callback_query.message.edit_reply_markup(reply_markup=None)
     
+    await save_state_into_db(callback_query.from_user.id, 'task_is_done')
     await callback_query.answer(cache_time=0)
 
 
@@ -87,6 +121,7 @@ async def check_task(message: types.Message, state: FSMContext):
     await utils.send_and_copy_message(bot, ADMIN_ID, message, message_for_admin, reply_markup)
     await message.answer('Ваше задание отправлено на проверку. Вы получите ответ, как только задание будет проверено')
     await state.finish()
+    await delete_state_from_db(message.from_user.id)
 
 
 @logger.catch
@@ -116,7 +151,7 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
 
 @logger.catch
 @dp.callback_query_handler(callback_data_models.decline_task_cb_data.filter())
-async def decline_task_task(callback_query: CallbackQuery, callback_data: dict):
+async def decline_task(callback_query: CallbackQuery, callback_data: dict):
     receiver_id = callback_data['receiver_id']
     
     await bot.send_message(receiver_id, 'Ваше задание не приняли, комментарий не дали. '
@@ -223,6 +258,7 @@ async def send_comment_after_decline(message: types.Message, state: FSMContext):
 async def resend_declined_answer(callback_query: CallbackQuery):
     await callback_query.message.edit_reply_markup(reply_markup=None)
     await TaskStates.task_is_done.set()
+    await save_state_into_db(callback_query.from_user.id, 'task_is_done')
 
 
 @logger.catch
@@ -232,6 +268,8 @@ async def drop_state(callback_query: CallbackQuery):
     await state.finish()
     await callback_query.message.delete()
     await callback_query.answer('Действие отменено')
+    
+    await delete_state_from_db(callback_query.from_user.id)
 
 
 @logger.catch
@@ -261,6 +299,7 @@ async def check_payment_command(message: types.Message):
             await message.answer(answer_message)
     except Exception as x:
         await message.answer(answer_message)
+        logger.error(x)
 
 
 @logger.catch
@@ -269,6 +308,7 @@ async def send_payment_link_manually(message: types.Message):
     await message.answer(GET_PAYMENT_LINK_MANUALLY)
     await message.delete()
     await TaskStates.input_phone_number.set()
+    await save_state_into_db(message.from_user.id, 'input_phone_number')
 
 
 @logger.catch
@@ -296,20 +336,6 @@ async def payment_confirmed(user_id):
         pass
 
 
-async def backup_user_states():
-    session = db.Session()
-    try:
-        for user_id, state_dict in await storage.get_data():
-            task = models.Task(client_tg_id=user_id, current_state=state_dict['state'])
-            session.add(task)
-        session.commit()
-    except Exception as x:
-        logger.error(x)
-    finally:
-        if session.is_active:
-            session.close()
-
-
 # Define a function to restore the user states from the database
 async def restore_user_states():
     session = db.Session()
@@ -329,10 +355,6 @@ async def on_startup(_):
     await restore_user_states()
 
 
-async def on_shutdown(_):
-    await backup_user_states()
-
-
 if __name__ == '__main__':
     with logger.catch():
-        executor.start_polling(dispatcher=dp, skip_updates=True, on_startup=on_startup, on_shutdown=on_shutdown)
+        executor.start_polling(dispatcher=dp, skip_updates=True, on_startup=on_startup)
