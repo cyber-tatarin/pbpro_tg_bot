@@ -79,6 +79,7 @@ async def start(message: types.Message):
     await message.delete()
     await TaskStates.input_phone_number.set()
     await save_state_into_db(message.from_user.id, 'input_phone_number')
+    logger.debug(storage.data)
 
 
 @logger.catch
@@ -341,7 +342,7 @@ async def restore_user_states():
     session = db.Session()
     try:
         for row in session.query(models.State).all():
-            await storage.set_state(user=row.client_tg_id, state=row.current_state)
+            await storage.set_state(user=row.client_tg_id, state=row.current_state, chat=row.client_tg_id)
         session.query(models.State).delete()
         session.commit()
     except Exception as x:
@@ -349,7 +350,8 @@ async def restore_user_states():
     finally:
         if session.is_active:
             session.close()
-
+        logger.debug(storage.data)
+    
 
 async def on_startup(_):
     await restore_user_states()
