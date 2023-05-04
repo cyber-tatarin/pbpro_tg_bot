@@ -43,7 +43,7 @@ class TaskStates(StatesGroup):
 @logger.catch
 @dp.message_handler(state='*', commands=['start'])
 async def start(message: types.Message):
-    logger.debug('start')
+
     await message.answer(WELCOME_MESSAGE)
     await message.delete()
     await TaskStates.input_phone_number.set()
@@ -52,7 +52,7 @@ async def start(message: types.Message):
 @logger.catch
 @dp.message_handler(state=TaskStates.input_phone_number)
 async def send_payment_link(message: types.Message, state: FSMContext):
-    logger.debug('send_link')
+
     try:
         await message.answer(PAYMENT_LINK_MESSAGE,
                          reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
@@ -237,7 +237,7 @@ async def drop_state(callback_query: CallbackQuery):
 @logger.catch
 @dp.message_handler(state='*', commands=['help'])
 async def help_command(message: types.Message):
-    logger.debug('help')
+
     await message.delete()
     await message.answer('Если Вы столкнулись с проблемой, напишите мне @dimatatatarin. Мы все решим :)')
     await message.answer(f'Вот Ваш ID:')
@@ -267,7 +267,7 @@ async def check_payment_command(message: types.Message):
 @logger.catch
 @dp.message_handler(state='*', commands=['getpaymentlink'])
 async def send_payment_link_manually(message: types.Message):
-    logger.debug('send link manually')
+
     await message.answer(GET_PAYMENT_LINK_MANUALLY)
     await message.delete()
     await TaskStates.input_phone_number.set()
