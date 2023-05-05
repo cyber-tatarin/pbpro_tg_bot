@@ -4,6 +4,7 @@ from .utils import verify_signature
 from root.tg.main import payment_confirmed
 
 from root.logger.log import get_logger
+from root.gsheets import main as gsh
 
 
 logger = get_logger()
@@ -23,6 +24,7 @@ async def confirm_payment(signature, data):
             if session.is_active:
                 session.close()
             await payment_confirmed(user.client_tg_id)
+            await gsh.paid(user.client_tg_id)
             return
         logger.error(f'user for order_id: {data["order_num"]} is not found')
         return

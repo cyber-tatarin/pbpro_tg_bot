@@ -20,6 +20,7 @@ import utils
 from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE, GET_PAYMENT_LINK_MANUALLY
 from root.db import setup as db
 from root.db import models
+from root.gsheets import main as gsh
 
 from root.logger.log import get_logger
 
@@ -79,7 +80,6 @@ async def start(message: types.Message):
     await message.delete()
     await TaskStates.input_phone_number.set()
     await save_state_into_db(message.from_user.id, 'TaskStates:input_phone_number')
-    logger.debug(storage.data)
 
 
 @logger.catch
@@ -92,6 +92,7 @@ async def send_payment_link(message: types.Message, state: FSMContext):
         logger.error(x)
     await state.finish()
     await delete_state_from_db(message.from_user.id)
+    await gsh.async_got_link(message.from_user.id,  message.from_user.full_name)
 
 
 @logger.catch
@@ -106,6 +107,7 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
     
     await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
     await callback_query.answer(cache_time=0)
+    await gsh.async_on_task(callback_query.from_user.id, task_number)
 
 
 @logger.catch
@@ -350,7 +352,6 @@ async def restore_user_states():
     finally:
         if session.is_active:
             session.close()
-        logger.debug(storage.data)
     
 
 async def on_startup(_):
