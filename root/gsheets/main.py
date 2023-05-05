@@ -1,4 +1,6 @@
 import asyncio
+import os.path
+
 import pygsheets
 from datetime import datetime, timezone
 from pygsheets.custom_types import HorizontalAlignment, FormatType
@@ -6,9 +8,9 @@ from pygsheets.custom_types import HorizontalAlignment, FormatType
 from root.logger.log import get_logger
 
 logger = get_logger()
-
+key_json = os.path.abspath(os.path.join(os.path.pardir, 'gsheets', 'gsheets_key.json'))
 # Authenticate using service account credentials
-gc = pygsheets.authorize(service_file='gsheets_key.json')
+gc = pygsheets.authorize(service_file=key_json)
 
 # Open the Google Sheet by name
 sheet = gc.open('ProjectBox telegram bot overview')
