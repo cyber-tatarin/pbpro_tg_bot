@@ -1,7 +1,6 @@
 import asyncio
 import pygsheets
 from datetime import datetime, timezone
-import pandas as pd
 from pygsheets.custom_types import HorizontalAlignment, FormatType
 
 from root.logger.log import get_logger
