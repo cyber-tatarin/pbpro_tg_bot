@@ -12,23 +12,29 @@ logger = get_logger()
 
 @logger.catch
 async def confirm_payment(signature, data):
-    # if verify_signature(signature, data):
-    if float(data['sum']) >= 2000 and data['payment_status'] == 'success':
-        logger.info(f'prodamus/confirm_payment {data["order_num"]}')
-        session = db.Session()
-        user = session.query(models.User).filter(models.User.order_id == data['order_num']).first()
-        if user:
-            user.have_paid = True
-            session.commit()
-            session.refresh(user)
-            if session.is_active:
-                session.close()
-            await payment_confirmed(user.client_tg_id)
-            await gsh.paid(user.client_tg_id)
+    try:
+        if verify_signature(signature, data, transformation_needed=True):
+            if float(data['sum']) >= 800 and data['payment_status'] == 'success':
+                logger.info(f'prodamus/confirm_payment {data["order_num"]}')
+                session = db.Session()
+                user = session.query(models.User).filter(models.User.order_id == data['order_num']).first()
+                if user:
+                    user.have_paid = True
+                    session.commit()
+                    session.refresh(user)
+                    if session.is_active:
+                        session.close()
+                    await payment_confirmed(user.client_tg_id)
+                    await gsh.paid(user.client_tg_id)
+                    return
+                logger.error(f'user with order_id: {data["order_num"]} is not found')
+                return
+            logger.error(f'payment with order_id: {data["order_num"]} is not NOT successful')
             return
-        logger.error(f'user for order_id: {data["order_num"]} is not found')
+        logger.error(f'payment with order_id: {data["order_num"]} has incorrect signature')
         return
-    return
+    except KeyError as x:
+        logger.exception(x)
 
 
         
