@@ -25,7 +25,7 @@ async def confirm_payment(signature, data):
                     if session.is_active:
                         session.close()
                     await payment_confirmed(user.client_tg_id)
-                    await gsh.paid(user.client_tg_id)
+                    await gsh.async_paid(user.client_tg_id)
                     return
                 logger.error(f'user with order_id: {data["order_num"]} is not found')
                 return
