@@ -20,7 +20,7 @@ worksheet = sheet[0]
 
 def find_row_number(user_id):
     try:
-        cells_list_of_lists = sheet.find(user_id)    # [[]]
+        cells_list_of_lists = sheet.find(str(user_id))    # [[]]
         if cells_list_of_lists[0]:   # empty list object considered as false
             return cells_list_of_lists[0][0].row
         else:
