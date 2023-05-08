@@ -7,10 +7,10 @@ from root.prodamus.main import confirm_payment
 from main import payment_confirmed
 from dotenv import load_dotenv, find_dotenv
 
-from root.logger.log import get_logger
+from root.logger.log import logger
 
 
-logger = get_logger()
+logger = logger
 load_dotenv(find_dotenv())
 
 

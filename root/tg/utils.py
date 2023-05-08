@@ -3,9 +3,9 @@ from root.db import models
 from sqlalchemy.exc import IntegrityError
 import uuid
 
-from root.logger.log import get_logger
+from root.logger.log import logger
 
-logger = get_logger()
+logger = logger
 
 
 async def send_and_copy_message(bot, receiver_id, message, extra_message, reply_markup=None, divider=True):

@@ -5,9 +5,9 @@ import pygsheets
 from datetime import datetime, timezone
 from pygsheets.custom_types import HorizontalAlignment, FormatType
 
-from root.logger.log import get_logger
+from root.logger.log import logger
 
-logger = get_logger()
+logger = logger
 key_json = os.path.abspath(os.path.join(os.path.pardir, 'gsheets', 'gsheets_key.json'))
 # Authenticate using service account credentials
 gc = pygsheets.authorize(service_file=key_json)

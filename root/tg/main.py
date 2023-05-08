@@ -22,9 +22,9 @@ from root.db import setup as db
 from root.db import models
 from root.gsheets import main as gsh
 
-from root.logger.log import get_logger
+from root.logger.log import logger
 
-logger = get_logger()
+logger = logger
 
 load_dotenv(find_dotenv())
 

@@ -3,11 +3,11 @@ from root.db import models
 from .utils import verify_signature
 from root.tg.main import payment_confirmed
 
-from root.logger.log import get_logger
+from root.logger.log import logger
 from root.gsheets import main as gsh
 
 
-logger = get_logger()
+logger = logger
 
 
 @logger.catch
