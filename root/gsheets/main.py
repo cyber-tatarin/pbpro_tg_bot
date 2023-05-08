@@ -1,5 +1,6 @@
 import asyncio
 import os.path
+from concurrent.futures import ThreadPoolExecutor
 
 import pygsheets
 from datetime import datetime, timezone
@@ -36,7 +37,7 @@ def got_link(user_id, user_full_name):
         row_number = find_row_number(user_id)
         col_index = 3
         
-        if row_number is None:
+        if row_number is not None:
             id_user_time = [[user_id, user_full_name, current_time]]
             
             last_row = worksheet.get_col(1, include_empty=False)
@@ -103,9 +104,10 @@ def on_task(user_id, task_number):
 async def async_got_link(user_id, user_full_name):
     try:
         loop = asyncio.get_running_loop()
+        executor = ThreadPoolExecutor(max_workers=4)
     
         # run the blocking sync operation in a separate thread
-        await loop.run_in_executor(None, got_link, user_id, user_full_name)
+        await loop.run_in_executor(executor, got_link, user_id, user_full_name)
     
         # do some other async operations
         await asyncio.sleep(1)
@@ -117,9 +119,10 @@ async def async_got_link(user_id, user_full_name):
 async def async_on_task(user_id, task_number):
     try:
         loop = asyncio.get_running_loop()
+        executor = ThreadPoolExecutor(max_workers=4)
     
         # run the blocking sync operation in a separate thread
-        await loop.run_in_executor(None, on_task, user_id, task_number)
+        await loop.run_in_executor(executor, on_task, user_id, task_number)
     
         # do some other async operations
         await asyncio.sleep(1)
@@ -131,9 +134,10 @@ async def async_on_task(user_id, task_number):
 async def async_paid(user_id):
     try:
         loop = asyncio.get_running_loop()
+        executor = ThreadPoolExecutor(max_workers=4)
         
         # run the blocking sync operation in a separate thread
-        await loop.run_in_executor(None, paid, user_id)
+        await loop.run_in_executor(executor, paid, user_id)
     
         # do some other async operations
         await asyncio.sleep(1)
