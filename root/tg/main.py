@@ -44,32 +44,35 @@ class TaskStates(StatesGroup):
     send_comment_after_decline = State()
 
 
-async def save_state_into_db(user_id, state):
+def save_state_into_db(user_id, state):
     session = db.Session()
     try:
-        state = models.State(client_tg_id=user_id, current_state=state)
-        session.add(state)
+        state_db_obj = models.State(client_tg_id=user_id, current_state=state)
+        session.add(state_db_obj)
         session.commit()
     except IntegrityError:
-        session.refresh()
+        session.rollback()
         existing_state = session.query(models.State).filter(models.State.client_tg_id==user_id).first()
         existing_state.current_state = state
+        session.commit()
     except Exception as x:
-        logger.error(x)
+        logger.exception(x)
     finally:
+        logger.info(f'state for {user_id} is added')
         if session.is_active:
             session.close()
         
         
-async def delete_state_from_db(user_id):
+def delete_state_from_db(user_id):
     session = db.Session()
     try:
         existing_state = session.query(models.State).filter(models.State.client_tg_id==user_id).first()
         session.delete(existing_state)
         session.commit()
     except Exception as x:
-        logger.error(x)
+        logger.exception(x)
     finally:
+        logger.info('state is deleted')
         if session.is_active:
             session.close()
         
