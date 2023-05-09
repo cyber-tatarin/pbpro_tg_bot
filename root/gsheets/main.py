@@ -37,7 +37,7 @@ def got_link(user_id, user_full_name):
         row_number = find_row_number(user_id)
         col_index = 3
         
-        if row_number is not None:
+        if row_number is None:
             id_user_time = [[user_id, user_full_name, current_time]]
             
             last_row = worksheet.get_col(1, include_empty=False)
@@ -45,7 +45,7 @@ def got_link(user_id, user_full_name):
             insert_index = len(last_row)
             worksheet.insert_rows(row=insert_index, values=id_user_time, inherit=True)
             
-            cell_to_edit = worksheet.cell((row_number, col_index))
+            cell_to_edit = worksheet.cell((insert_index, col_index))
             cell_to_edit.set_number_format(FormatType.DATE_TIME, pattern="DD-MM-YYYY HH:MM")
             cell_to_edit.update()
             
