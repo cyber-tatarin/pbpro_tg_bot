@@ -1,3 +1,5 @@
+import asyncio
+
 from root.db import setup as db
 from root.db import models
 from .utils import verify_signature
@@ -25,7 +27,8 @@ async def confirm_payment(signature, data):
                     if session.is_active:
                         session.close()
                     await payment_confirmed(user.client_tg_id)
-                    await gsh.async_paid(user.client_tg_id)
+                    loop = asyncio.get_event_loop()
+                    loop.create_task(gsh.async_paid(user.client_tg_id))
                     return
                 logger.error(f'user with order_id: {data["order_num"]} is not found')
                 return

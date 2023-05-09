@@ -1,3 +1,4 @@
+import asyncio
 import os
 import sys
 
@@ -92,7 +93,8 @@ async def send_payment_link(message: types.Message, state: FSMContext):
         logger.error(x)
     await state.finish()
     await delete_state_from_db(message.from_user.id)
-    await gsh.async_got_link(message.from_user.id,  message.from_user.full_name)
+    loop = asyncio.get_event_loop()
+    loop.create_task(gsh.async_got_link(message.from_user.id,  message.from_user.full_name))
 
 
 @logger.catch
@@ -107,7 +109,8 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
     
     await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
     await callback_query.answer(cache_time=0)
-    await gsh.async_on_task(callback_query.from_user.id, task_number)
+    loop = asyncio.get_event_loop()
+    loop.create_task(gsh.async_on_task(callback_query.from_user.id, task_number))
 
 
 @logger.catch

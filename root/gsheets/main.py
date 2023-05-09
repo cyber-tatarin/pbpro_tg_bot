@@ -104,7 +104,7 @@ def on_task(user_id, task_number):
 async def async_got_link(user_id, user_full_name):
     try:
         loop = asyncio.get_running_loop()
-        executor = ThreadPoolExecutor(max_workers=4)
+        executor = ThreadPoolExecutor(max_workers=10)
     
         # run the blocking sync operation in a separate thread
         await loop.run_in_executor(executor, got_link, user_id, user_full_name)
@@ -119,7 +119,7 @@ async def async_got_link(user_id, user_full_name):
 async def async_on_task(user_id, task_number):
     try:
         loop = asyncio.get_running_loop()
-        executor = ThreadPoolExecutor(max_workers=4)
+        executor = ThreadPoolExecutor(max_workers=10)
     
         # run the blocking sync operation in a separate thread
         await loop.run_in_executor(executor, on_task, user_id, task_number)
@@ -134,7 +134,7 @@ async def async_on_task(user_id, task_number):
 async def async_paid(user_id):
     try:
         loop = asyncio.get_running_loop()
-        executor = ThreadPoolExecutor(max_workers=4)
+        executor = ThreadPoolExecutor(max_workers=10)
         
         # run the blocking sync operation in a separate thread
         await loop.run_in_executor(executor, paid, user_id)
