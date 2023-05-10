@@ -57,7 +57,6 @@ async def confirm_user_payment_manually_form(request):
     )
 
 
-@logger.catch
 async def confirm_user_payment_manually(request):
     data = await request.post()
     user_id = data['id']
