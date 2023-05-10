@@ -47,15 +47,15 @@ class TaskStates(StatesGroup):
 async def save_state_into_db(user_id, state):
     session = db.Session()
     try:
-        state = models.State(client_tg_id=user_id, current_state=state)
-        session.add(state)
+        state_db_object = models.State(client_tg_id=user_id, current_state=state)
+        session.add(state_db_object)
         session.commit()
     except IntegrityError:
-        session.refresh()
+        session.rollback()
         existing_state = session.query(models.State).filter(models.State.client_tg_id==user_id).first()
         existing_state.current_state = state
     except Exception as x:
-        logger.error(x)
+        logger.exception(x)
     finally:
         if session.is_active:
             session.close()
@@ -68,7 +68,7 @@ async def delete_state_from_db(user_id):
         session.delete(existing_state)
         session.commit()
     except Exception as x:
-        logger.error(x)
+        logger.exception(x)
     finally:
         if session.is_active:
             session.close()
@@ -90,7 +90,7 @@ async def send_payment_link(message: types.Message, state: FSMContext):
         await message.answer(PAYMENT_LINK_MESSAGE,
                              reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
     except Exception as x:
-        logger.error(x)
+        logger.exception(x)
     await state.finish()
     await delete_state_from_db(message.from_user.id)
     loop = asyncio.get_event_loop()
@@ -305,7 +305,7 @@ async def check_payment_command(message: types.Message):
             await message.answer(answer_message)
     except Exception as x:
         await message.answer(answer_message)
-        logger.error(x)
+        logger.exception(x)
 
 
 @logger.catch
@@ -332,7 +332,7 @@ async def payment_confirmed(user_id):
         except IntegrityError as x:
             await bot.send_message(user_id, 'Вы уже получили задание')
         except Exception as x:
-            logger.error(x)
+            logger.exception(x)
             await bot.send_message(user_id, 'У нас возникли проблемы с базой данных. Если Вы видите это сообщение,'
                                             'напишите, пожалуйста, мне @dimatatatarin')
         finally:
@@ -351,7 +351,7 @@ async def restore_user_states():
         session.query(models.State).delete()
         session.commit()
     except Exception as x:
-        logger.error(x)
+        logger.exception(x)
     finally:
         if session.is_active:
             session.close()
