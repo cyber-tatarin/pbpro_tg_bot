@@ -84,6 +84,45 @@ async def start(message: types.Message):
 
 
 @logger.catch
+@dp.message_handler(state='*', commands=['help'])
+async def help_command(message: types.Message):
+    await message.delete()
+    await message.answer('Если Вы столкнулись с проблемой, напишите мне @dimatatatarin. Мы все решим :)')
+    await message.answer(f'Вот Ваш ID:')
+    await message.answer(message.from_user.id)
+    await message.answer('Он может понадобиться для решения проблемы')
+
+
+@logger.catch
+@dp.message_handler(state='*', commands=['checkpayment'])
+async def check_payment_command(message: types.Message):
+    await message.delete()
+    answer_message = 'Пока Ваша оплата не пришла. Ожидание оплаты может доходить до 15 минут. ' \
+                     'Но не переживайте, мы обязательно разберемся, даже если что-то пошло не так\n' \
+                     'Нажмите на /help, если Вам нужна дополнительная помощь'
+    
+    try:
+        session = db.Session()
+        user = session.query(models.User).filter(models.User.client_tg_id == message.from_user.id).first()
+        if user.have_paid:
+            await payment_confirmed(message.from_user.id)
+        else:
+            await message.answer(answer_message)
+    except Exception as x:
+        await message.answer(answer_message)
+        logger.exception(x)
+
+
+@logger.catch
+@dp.message_handler(state='*', commands=['getpaymentlink'])
+async def send_payment_link_manually(message: types.Message):
+    await message.answer(GET_PAYMENT_LINK_MANUALLY)
+    await message.delete()
+    await TaskStates.input_phone_number.set()
+    await save_state_into_db(message.from_user.id, 'TaskStates:input_phone_number')
+
+
+@logger.catch
 @dp.message_handler(state=TaskStates.input_phone_number)
 async def send_payment_link(message: types.Message, state: FSMContext):
     try:
@@ -276,45 +315,6 @@ async def drop_state(callback_query: CallbackQuery):
     await callback_query.answer('Действие отменено')
     
     await delete_state_from_db(callback_query.from_user.id)
-
-
-@logger.catch
-@dp.message_handler(state='*', commands=['help'])
-async def help_command(message: types.Message):
-    await message.delete()
-    await message.answer('Если Вы столкнулись с проблемой, напишите мне @dimatatatarin. Мы все решим :)')
-    await message.answer(f'Вот Ваш ID:')
-    await message.answer(message.from_user.id)
-    await message.answer('Он может понадобиться для решения проблемы')
-
-
-@logger.catch
-@dp.message_handler(state='*', commands=['checkpayment'])
-async def check_payment_command(message: types.Message):
-    await message.delete()
-    answer_message = 'Пока Ваша оплата не пришла. Ожидание оплаты может доходить до 15 минут. ' \
-                     'Но не переживайте, мы обязательно разберемся, даже если что-то пошло не так\n' \
-                     'Нажмите на /help, если Вам нужна дополнительная помощь'
-    
-    try:
-        session = db.Session()
-        user = session.query(models.User).filter(models.User.client_tg_id == message.from_user.id).first()
-        if user.have_paid:
-            await payment_confirmed(message.from_user.id)
-        else:
-            await message.answer(answer_message)
-    except Exception as x:
-        await message.answer(answer_message)
-        logger.exception(x)
-
-
-@logger.catch
-@dp.message_handler(state='*', commands=['getpaymentlink'])
-async def send_payment_link_manually(message: types.Message):
-    await message.answer(GET_PAYMENT_LINK_MANUALLY)
-    await message.delete()
-    await TaskStates.input_phone_number.set()
-    await save_state_into_db(message.from_user.id, 'TaskStates:input_phone_number')
 
 
 @logger.catch
