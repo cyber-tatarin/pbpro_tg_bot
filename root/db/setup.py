@@ -18,9 +18,10 @@ with logger.catch():
     Session = sessionmaker(bind=engine)
 
 if __name__ == '__main__':
-    models.User.__table__.create(engine)
-    models.State.__table__.create(engine)
-    models.Task.__table__.create(engine)
+    # models.User.__table__.create(engine)
+    # models.State.__table__.create(engine)
+    # models.Task.__table__.create(engine)
+    models.Text.__table__.create(engine)
     
     # models.User.__table__.drop(engine)
     # models.Task.__table__.drop(engine)

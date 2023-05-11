@@ -41,3 +41,11 @@ class User(Base):
     order_id = Column("order_id", String(50), unique=True)
     have_paid = Column("have_paid", Boolean, default=False)
     
+    
+class Text(Base):
+    __tablename__ = "texts"
+    
+    id = Column(Integer, primary_key=True)
+    text = Column(String(2500))
+    
+    

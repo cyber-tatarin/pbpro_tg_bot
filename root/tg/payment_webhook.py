@@ -4,15 +4,27 @@ import os
 from aiohttp import web
 import csv
 import io
+import aiohttp_jinja2
+import jinja2
+from sqlalchemy.exc import IntegrityError
 
 from root.prodamus.main import confirm_payment
 from main import payment_confirmed, send_message_to_users_manually, send_task_to_user_manually
 from dotenv import load_dotenv, find_dotenv
 
 from root.logger.log import logger
+from root.db import setup as db, models
 
 logger = logger
 load_dotenv(find_dotenv())
+
+
+env = jinja2.Environment(
+    loader=jinja2.FileSystemLoader('templates'),
+    trim_blocks=True,
+    lstrip_blocks=True,
+    keep_trailing_newline=True
+)
 
 
 @logger.catch
@@ -155,7 +167,7 @@ async def send_task_manually_form(request):
               <label for="task">Номер задания:</label><br>
               <input type="number" id="task" name="task_number" required><br>
               
-              <label for="lname">Пароль:</label><br>
+              <label for="pass">Пароль:</label><br>
               <input type="password" id="pass" name="pass" required><br><br>
               
               <input type="submit" value="Отправить">
@@ -173,6 +185,7 @@ async def send_task_manually(request):
     try:
         data = await request.post()
         user_id = data['id']
+        # if data['task_number'] > 7
         task_number = str(data['task_number'])
         password = data['pass']
     except Exception as x:
@@ -183,7 +196,58 @@ async def send_task_manually(request):
         await send_task_to_user_manually(user_id, task_number)
         raise web.HTTPFound('/success')
     else:
-        logger.info('Someone tried to access admin panel without paassword')
+        logger.info('Someone tried to access admin panel without password')
+        raise web.HTTPFound('/fail')
+    
+    
+@aiohttp_jinja2.template('update_text_form.html')
+async def update_text_form(request):
+    session = db.Session()
+    all_text_objects = session.query(models.Text).order_by(models.Text.id).all()
+    return {'text_objects': all_text_objects}
+
+
+async def update_text(request):
+    try:
+        data = await request.post()
+        text_id = data['id']
+        # if data['task_number'] > 7
+        new_text = data['new_text']
+        password = data['pass']
+    except Exception as x:
+        logger.exception(x)
+        raise web.HTTPFound('/fail')
+    
+    if password == os.getenv('WEB_PASSWORD'):
+        session = db.Session()
+        if new_text != '':
+            text_object = models.Text(id=text_id, text=new_text)
+            try:
+                session.add(text_object)
+                session.commit()
+            except IntegrityError:
+                session.rollback()
+                text_object = session.query(models.Text).filter(models.Text.id == text_id).first()
+                text_object.text = new_text
+                session.commit()
+            finally:
+                if session.is_active:
+                    session.close()
+            raise web.HTTPFound('/update_text_form')
+        else:
+            text_object = session.query(models.Text).filter(models.Text.id == text_id).first()
+            if text_object:
+                session.delete(text_object)
+                try:
+                    session.commit()
+                except Exception as x:
+                    logger.exception(x)
+                    raise web.HTTPFound('/fail')
+            if session.is_active:
+                session.close()
+            raise web.HTTPFound('/update_text_form')
+    else:
+        logger.info('Someone tried to access admin panel without password')
         raise web.HTTPFound('/fail')
 
 
@@ -212,6 +276,7 @@ async def start_menu(request):
                 <a href="/confirm_payment_manually_form">Подтвердить оплату вручную</a><br><br>
                 <a href="/send_message_manually_form">Отправить сообщения вручную</a><br><br>
                 <a href="/send_task_manually_form">Отправить задание вручную</a><br><br>
+                <a href="/update_text_form">Редактировать тексты</a><br><br>
 
 
                 </body>
@@ -237,6 +302,10 @@ app.router.add_post('/send_message_manually', send_message_manually)
 
 app.router.add_get('/send_task_manually_form', send_task_manually_form)
 app.router.add_post('/send_task_manually', send_task_manually)
+
+app.router.add_get('/update_text_form', update_text_form)
+app.router.add_post('/update_text', update_text)
+aiohttp_jinja2.setup(app, loader=env.loader, context_processors=[aiohttp_jinja2.request_processor])
 
 if __name__ == '__main__':
     web.run_app(app, host='0.0.0.0')

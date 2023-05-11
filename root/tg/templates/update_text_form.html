@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<body>
+<h2>Редактировать тексты сообщений</h2>
+
+<table style="width:100%">
+	<tr>
+    <td>ID текста</td>
+    <td>Текст</td>
+  </tr>
+	{% for text_object in text_objects %}
+  <tr>
+    <td>{{text_object.id}}</td>
+	  <td><pre>{{text_object.text}}</pre></td>
+  </tr>
+	{% endfor %}
+</table>
+
+<form action="/update_text" method="POST">
+              <label for="id">ID текста:</label><br>
+              <input type="text" id="id" name="id" required><br>
+
+              <label for="message">Новый текст:</label><br>
+	          <textarea id="message" rows = "30" cols = "60" name = "new_text"></textarea> <br><br>
+
+              <label for="pass">Пароль:</label><br>
+              <input type="password" id="pass" name="pass" required><br><br>
+
+              <input type="submit" value="Отправить">
+</form>
+
+</body>
+</html>

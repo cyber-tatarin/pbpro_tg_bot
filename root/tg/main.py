@@ -18,7 +18,7 @@ from sqlalchemy.orm import sessionmaker
 from keyboards import *
 import callback_data_models
 import utils
-from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE, GET_PAYMENT_LINK_MANUALLY
+# from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE, GET_PAYMENT_LINK_MANUALLY
 from root.db import setup as db
 from root.db import models
 from root.gsheets import main as gsh
@@ -52,19 +52,19 @@ async def save_state_into_db(user_id, state):
         session.commit()
     except IntegrityError:
         session.rollback()
-        existing_state = session.query(models.State).filter(models.State.client_tg_id==user_id).first()
+        existing_state = session.query(models.State).filter(models.State.client_tg_id == user_id).first()
         existing_state.current_state = state
     except Exception as x:
         logger.exception(x)
     finally:
         if session.is_active:
             session.close()
-        
-        
+
+
 async def delete_state_from_db(user_id):
     session = db.Session()
     try:
-        existing_state = session.query(models.State).filter(models.State.client_tg_id==user_id).first()
+        existing_state = session.query(models.State).filter(models.State.client_tg_id == user_id).first()
         session.delete(existing_state)
         session.commit()
     except Exception as x:
@@ -72,12 +72,24 @@ async def delete_state_from_db(user_id):
     finally:
         if session.is_active:
             session.close()
-        
+
 
 @logger.catch
 @dp.message_handler(state='*', commands=['start'])
 async def start(message: types.Message):
-    await message.answer(WELCOME_MESSAGE)
+    session = db.Session()
+    try:
+        WELCOME_MESSAGE = session.query(models.Text).filter(models.Text.id == 91).first().text
+        await message.answer(WELCOME_MESSAGE)
+    except Exception as x:
+        logger.exception(x)
+        await message.answer('У нас проблемы с базой данных. Если Вы видите это сообщение, '
+                             'напишите, пожалуйста, мне @dimatatatarin')
+        return
+    finally:
+        if session.is_active:
+            session.close()
+    
     await message.delete()
     await TaskStates.input_phone_number.set()
     await save_state_into_db(message.from_user.id, 'TaskStates:input_phone_number')
@@ -116,6 +128,19 @@ async def check_payment_command(message: types.Message):
 @logger.catch
 @dp.message_handler(state='*', commands=['getpaymentlink'])
 async def send_payment_link_manually(message: types.Message):
+    session = db.Session()
+    try:
+        GET_PAYMENT_LINK_MANUALLY = session.query(models.Text).filter(models.Text.id == 92).first().text
+
+    except Exception as x:
+        logger.exception(x)
+        await message.answer('У нас проблемы с базой данных. Если Вы видите это сообщение, '
+                             'напишите, пожалуйста, мне @dimatatatarin')
+        return
+    finally:
+        if session.is_active:
+            session.close()
+
     await message.answer(GET_PAYMENT_LINK_MANUALLY)
     await message.delete()
     await TaskStates.input_phone_number.set()
@@ -125,6 +150,18 @@ async def send_payment_link_manually(message: types.Message):
 @logger.catch
 @dp.message_handler(state=TaskStates.input_phone_number)
 async def send_payment_link(message: types.Message, state: FSMContext):
+    session = db.Session()
+    try:
+        PAYMENT_LINK_MESSAGE = session.query(models.Text).filter(models.Text.id == 93).first().text
+    except Exception as x:
+        logger.exception(x)
+        await message.answer('У нас проблемы с базой данных. Если Вы видите это сообщение, '
+                             'напишите, пожалуйста, мне @dimatatatarin')
+        return
+    finally:
+        if session.is_active:
+            session.close()
+    
     try:
         await message.answer(PAYMENT_LINK_MESSAGE,
                              reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
@@ -133,7 +170,7 @@ async def send_payment_link(message: types.Message, state: FSMContext):
     await state.finish()
     await delete_state_from_db(message.from_user.id)
     loop = asyncio.get_event_loop()
-    loop.create_task(gsh.async_got_link(message.from_user.id,  message.from_user.full_name))
+    loop.create_task(gsh.async_got_link(message.from_user.id, message.from_user.full_name))
 
 
 @logger.catch
@@ -141,7 +178,20 @@ async def send_payment_link(message: types.Message, state: FSMContext):
 async def send_task(callback_query: CallbackQuery, callback_data: dict):
     task_number = callback_data['task_number']
     
-    await bot.send_message(callback_query.from_user.id, TASKS[task_number])
+    session = db.Session()
+    try:
+        TASK = session.query(models.Text).filter(models.Text.id == task_number).first().text
+    except Exception as x:
+        logger.exception(x)
+        await bot.send_message(callback_query.from_user.id,
+                               'У нас проблемы с базой данных. Если Вы видите это сообщение, '
+                               'напишите, пожалуйста, мне @dimatatatarin')
+        return
+    finally:
+        if session.is_active:
+            session.close()
+    
+    await bot.send_message(callback_query.from_user.id, TASK)
     await TaskStates.task_is_done.set()
     
     await callback_query.message.edit_reply_markup(reply_markup=None)
@@ -181,8 +231,22 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
     session.commit()
     if session.is_active:
         session.close()
+
+    session = db.Session()
+    try:
+        number_of_tasks_query = session.query(models.Text).filter(models.Text.id < 50)
+        number_of_tasks = number_of_tasks_query.count()
+    except Exception as x:
+        logger.exception(x)
+        await bot.send_message(callback_query.from_user.id,
+                               'У нас проблемы с базой данных. Если Вы видите это сообщение, '
+                               'напишите, пожалуйста, мне @dimatatatarin')
+        return
+    finally:
+        if session.is_active:
+            session.close()
     
-    if task_number > len(TASKS):
+    if task_number > number_of_tasks:
         await bot.send_message(receiver_id, 'Ваше задание приняли!')
         await bot.send_message(receiver_id, 'Ура, Вы выполнили все задания!')
     else:
@@ -264,8 +328,21 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
         session.close()
     
     message_for_client = f'Вот ответ от Вашего ментора:'
-    
-    if task_number > len(TASKS):
+    session = db.Session()
+    try:
+        number_of_tasks_query = session.query(models.Text).filter(models.Text.id < 50)
+        number_of_tasks = number_of_tasks_query.count()
+    except Exception as x:
+        logger.exception(x)
+        await bot.send_message(message.from_user.id,
+                               'У нас проблемы с базой данных. Если Вы видите это сообщение, '
+                               'напишите, пожалуйста, мне @dimatatatarin')
+        return
+    finally:
+        if session.is_active:
+            session.close()
+
+    if task_number > number_of_tasks:
         await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
                                           divider=False)
         await bot.send_message(receiver_id, 'Ура, Вы выполнили все задания!')
@@ -355,7 +432,7 @@ async def send_task_to_user_manually(user_id, task_number):
     # await save_state_into_db(user_id, 'TaskStates:task_is_done')
     # loop = asyncio.get_event_loop()
     # loop.create_task(gsh.async_on_task(user_id, task_number))
-
+    
     reply_markup = get_ikb_to_get_task(str(task_number))
     await bot.send_message(user_id, 'Нажмите кнопку ниже, чтобы получить задание',
                            reply_markup=reply_markup)
@@ -387,7 +464,7 @@ async def restore_user_states():
     finally:
         if session.is_active:
             session.close()
-    
+
 
 async def on_startup(_):
     await restore_user_states()
