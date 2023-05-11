@@ -87,9 +87,10 @@ async def send_message_manually_form(request):
         
             <form action="/send_message_manually" method="POST" enctype="multipart/form-data">
                 <label for="file">Файл с ID пользователей в первом столбце:</label><br>
-                <input type="file" id="file" name="csv_file" required>
+                <input type="file" id="file" name="csv_file" required> <br><br>
                 
-                <textarea rows = "30" cols = "60" name = "message_text" required></textarea>
+                <label for="message">Текст сообщения:</label><br>
+                <textarea id="message" rows = "30" cols = "60" name = "message_text" required></textarea> <br><br>
                 
                 <label for="pass">Пароль:</label><br>
                 <input type="password" id="pass" name="pass" required><br><br>
@@ -200,7 +201,24 @@ async def fail(request):
 
 @logger.catch
 async def start_menu(request):
-    return web.json_response({}, status=200)
+    return web.Response(
+        text="""
+            <!DOCTYPE html>
+                <html>
+                <body>
+
+                <h2>Панель управления ботом @StroyTinder_bot</h2>
+
+                <a href="/confirm_payment_manually_form">Подтвердить оплату вручную</a><br><br>
+                <a href="/send_message_manually_form">Отправить сообщения вручную</a><br><br>
+                <a href="/send_task_manually_form">Отправить задание вручную</a><br><br>
+
+
+                </body>
+                </html>
+            """,
+        content_type='text/html'
+    )
 
 
 app = web.Application()
