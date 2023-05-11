@@ -239,5 +239,5 @@ app.router.add_get('/send_task_manually_form', send_task_manually_form)
 app.router.add_post('/send_task_manually', send_task_manually)
 
 if __name__ == '__main__':
-    # web.run_app(app, host='0.0.0.0')
-    web.run_app(app, host='127.0.0.1')
+    web.run_app(app, host='0.0.0.0')
+    # web.run_app(app, host='127.0.0.1')
