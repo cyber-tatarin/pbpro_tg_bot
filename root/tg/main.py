@@ -359,7 +359,17 @@ async def send_task_to_user_manually(user_id, task_number):
     reply_markup = get_ikb_to_get_task(str(task_number))
     await bot.send_message(user_id, 'Нажмите кнопку ниже, чтобы получить задание',
                            reply_markup=reply_markup)
-        
+    
+    task = models.Task(client_tg_id=user_id, current_task=task_number)
+    session = db.Session()
+    try:
+        session.add(task)
+        session.commit()
+    except IntegrityError as x:
+        pass
+    except Exception as x:
+        logger.exception(x)
+
 
 # Define a function to restore the user states from the database
 async def restore_user_states():
