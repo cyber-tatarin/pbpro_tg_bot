@@ -342,6 +342,20 @@ async def payment_confirmed(user_id):
         pass
 
 
+async def send_message_to_users_manually(user_ids_list: list, message):
+    for user_id in user_ids_list:
+        await bot.send_message(user_id, message)
+
+
+async def send_task_to_user_manually(user_id, task_number):
+    await bot.send_message(user_id, TASKS[task_number])
+    await storage.set_state(user=user_id, state='TaskStates:task_is_done', chat=user_id)
+    
+    await save_state_into_db(user_id, 'TaskStates:task_is_done')
+    loop = asyncio.get_event_loop()
+    loop.create_task(gsh.async_on_task(user_id, task_number))
+        
+
 # Define a function to restore the user states from the database
 async def restore_user_states():
     session = db.Session()

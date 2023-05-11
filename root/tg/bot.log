@@ -1,0 +1,717 @@
+2023-05-11T14:30:47.621920+0300 ERROR 'BodyPartReader' object has no attribute 'close'
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\payment_webhook.py", line 149, in <module>
+    web.run_app(app, host='127.0.0.1')
+    │   │       └ <Application 0x267703a1f90>
+    │   └ <function run_app at 0x0000026772B7B2E0>
+    └ <module 'aiohttp.web' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\aiohttp\\web.py'>
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiohttp\web.py", line 516, in run_app
+    loop.run_until_complete(main_task)
+    │    │                  └ <Task pending name='Task-1' coro=<_run_app() running at C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiohttp\web.p...
+    │    └ <function BaseEventLoop.run_until_complete at 0x000002677208A980>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 640, in run_until_complete
+    self.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x0000026772552980>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000002677208C720>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x0000026772014F40>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiohttp\web_protocol.py", line 433, in _handle_request
+    resp = await request_handler(request)
+                 │               └ <Request POST /process_csv_to_send_messages >
+                 └ <bound method Application._handle of <Application 0x267703a1f90>>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiohttp\web_app.py", line 504, in _handle
+    resp = await handler(request)
+                 │       └ <Request POST /process_csv_to_send_messages >
+                 └ <function process_csv at 0x00000267166989A0>
+
+> File "C:\xStorage\Projects\PrometeyBot\root\tg\payment_webhook.py", line 115, in process_csv
+    csv_file.close()
+    └ <aiohttp.multipart.BodyPartReader object at 0x000002671534CC10>
+
+AttributeError: 'BodyPartReader' object has no attribute 'close'
+2023-05-11T14:36:28.996794+0300 ERROR 'BodyPartReader' object has no attribute 'getvalue'
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\payment_webhook.py", line 149, in <module>
+    web.run_app(app, host='127.0.0.1')
+    │   │       └ <Application 0x26573a75f10>
+    │   └ <function run_app at 0x000002657629B2E0>
+    └ <module 'aiohttp.web' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\aiohttp\\web.py'>
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiohttp\web.py", line 516, in run_app
+    loop.run_until_complete(main_task)
+    │    │                  └ <Task pending name='Task-1' coro=<_run_app() running at C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiohttp\web.p...
+    │    └ <function BaseEventLoop.run_until_complete at 0x000002657576A980>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 640, in run_until_complete
+    self.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x0000026575C52980>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000002657576C720>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x00000265756E8F40>
+    └ <Handle <TaskStepMethWrapper object at 0x0000026519D5FAC0>()>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <TaskStepMethWrapper object at 0x0000026519D5FAC0>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <TaskStepMethWrapper object at 0x0000026519D5FAC0>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <TaskStepMethWrapper object at 0x0000026519D5FAC0>()>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiohttp\web_protocol.py", line 433, in _handle_request
+    resp = await request_handler(request)
+                 │               └ <Request POST /process_csv_to_send_messages >
+                 └ <bound method Application._handle of <Application 0x26573a75f10>>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiohttp\web_app.py", line 504, in _handle
+    resp = await handler(request)
+                 │       └ <Request POST /process_csv_to_send_messages >
+                 └ <function process_csv at 0x0000026519DC8900>
+
+> File "C:\xStorage\Projects\PrometeyBot\root\tg\payment_webhook.py", line 115, in process_csv
+    await csv_file.release(initial_value=csv_file.getvalue().decode('utf-8'))
+          │        │                     └ <aiohttp.multipart.BodyPartReader object at 0x0000026519DAFCD0>
+          │        └ <function BodyPartReader.release at 0x0000026576029A80>
+          └ <aiohttp.multipart.BodyPartReader object at 0x0000026519DAFCD0>
+
+AttributeError: 'BodyPartReader' object has no attribute 'getvalue'
+2023-05-11T16:17:21.923673+0300 INFO Someone tried to access admin panel without paassword
+2023-05-11T17:01:43.529298+0300 INFO inside send pm link
+2023-05-11T17:01:43.551051+0300 ERROR An error has been caught in function 'get_ikb_to_send_payment_link', process 'MainProcess' (13320), thread 'MainThread' (14676):
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x00000248A9970860>
+    │    └ <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x00000248AB988C90>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA0A850>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 920, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ {'client_tg_id': 459471362, 'order_id': '66118174-54c2-4681-91a2-d276a7685c80', 'have_paid': False}
+    │      │       └ 'INSERT INTO users (client_tg_id, order_id, have_paid) VALUES (%(client_tg_id)s, %(order_id)s, %(have_paid)s)'
+    │      └ <method 'execute' of 'psycopg2.extensions.cursor' objects>
+    └ <cursor object at 0x00000248CCA06CE0; closed: -1>
+
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "users_pkey"
+DETAIL:  Key (client_tg_id)=(459471362) already exists.
+
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\utils.py", line 27, in generate_payment_link
+    session.commit()
+    │       └ <function Session.commit at 0x00000248AA7F8900>
+    └ <sqlalchemy.orm.session.Session object at 0x00000248CC76B910>
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1905, in commit
+    trans.commit(_to_root=True)
+    │     └ <function SessionTransaction.commit at 0x00000248AA7EFA60>
+    └ <sqlalchemy.orm.session.SessionTransaction object at 0x00000248CCA03110>
+  File "<string>", line 2, in commit
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                │  │      │      └ {'_to_root': True}
+                │  │      └ ()
+                │  └ <sqlalchemy.orm.session.SessionTransaction object at 0x00000248CCA03110>
+                └ <function SessionTransaction.commit at 0x00000248AA7EF880>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1220, in commit
+    self._prepare_impl()
+    │    └ <function SessionTransaction._prepare_impl at 0x00000248AA7EF740>
+    └ <sqlalchemy.orm.session.SessionTransaction object at 0x00000248CCA03110>
+  File "<string>", line 2, in _prepare_impl
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+                │  │      │      └ {}
+                │  │      └ ()
+                │  └ <sqlalchemy.orm.session.SessionTransaction object at 0x00000248CCA03110>
+                └ <function SessionTransaction._prepare_impl at 0x00000248AA7EF6A0>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1195, in _prepare_impl
+    self.session.flush()
+    │    │       └ <function Session.flush at 0x00000248AA7FB600>
+    │    └ <sqlalchemy.orm.session.Session object at 0x00000248CC76B910>
+    └ <sqlalchemy.orm.session.SessionTransaction object at 0x00000248CCA03110>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4153, in flush
+    self._flush(objects)
+    │    │      └ None
+    │    └ <function Session._flush at 0x00000248AA7FB7E0>
+    └ <sqlalchemy.orm.session.Session object at 0x00000248CC76B910>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4289, in _flush
+    with util.safe_reraise():
+         │    └ <class 'sqlalchemy.util.langhelpers.safe_reraise'>
+         └ <module 'sqlalchemy.util' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\sqlalchemy\\util\\__init__.py'>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 147, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+          │         │              └ <traceback object at 0x00000248CCA2CDC0>
+          │         └ <method 'with_traceback' of 'BaseException' objects>
+          └ IntegrityError('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "users_pkey"\nDETAIL:  Key (...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 4250, in _flush
+    flush_context.execute()
+    │             └ <function UOWTransaction.execute at 0x00000248AA7EC2C0>
+    └ <sqlalchemy.orm.unitofwork.UOWTransaction object at 0x00000248CA6F1D90>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 467, in execute
+    rec.execute(self)
+    │   │       └ <sqlalchemy.orm.unitofwork.UOWTransaction object at 0x00000248CA6F1D90>
+    │   └ <function SaveUpdateAll.execute at 0x00000248AA7ECE00>
+    └ SaveUpdateAll(Mapper[User(users)])
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 644, in execute
+    util.preloaded.orm_persistence.save_obj(
+    │    │         │               └ <function save_obj at 0x00000248AA77AFC0>
+    │    │         └ <module 'sqlalchemy.orm.persistence' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\sqlalchemy\\orm\\pe...
+    │    └ <module 'sqlalchemy.util.preloaded' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\sqlalchemy\\util\\pr...
+    └ <module 'sqlalchemy.util' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\sqlalchemy\\util\\__init__.py'>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    └ <function _emit_insert_statements at 0x00000248AA7A7060>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1040, in _emit_insert_statements
+    result = connection.execute(
+             │          └ <function Connection.execute at 0x00000248A98AD440>
+             └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA0A850>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1413, in execute
+    return meth(
+           └ <bound method ClauseElement._execute_on_connection of <sqlalchemy.sql.dml.Insert object at 0x00000248CCA0B250>>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 483, in _execute_on_connection
+    return connection._execute_clauseelement(
+           │          └ <function Connection._execute_clauseelement at 0x00000248A98AD760>
+           └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA0A850>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+          │    └ <function Connection._execute_context at 0x00000248A98AD940>
+          └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA0A850>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1841, in _execute_context
+    return self._exec_single_context(
+           │    └ <function Connection._exec_single_context at 0x00000248A98AD9E0>
+           └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA0A850>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    │    └ <function Connection._handle_dbapi_exception at 0x00000248A98ADC60>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA0A850>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2339, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+          │                    │              │                 └ UniqueViolation('duplicate key value violates unique constraint "users_pkey"\nDETAIL:  Key (client_tg_id)=(459471362) already...
+          │                    │              └ (<class 'psycopg2.errors.UniqueViolation'>, UniqueViolation('duplicate key value violates unique constraint "users_pkey"\nDET...
+          │                    └ <method 'with_traceback' of 'BaseException' objects>
+          └ IntegrityError('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "users_pkey"\nDETAIL:  Key (...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x00000248A9970860>
+    │    └ <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x00000248AB988C90>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA0A850>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 920, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ {'client_tg_id': 459471362, 'order_id': '66118174-54c2-4681-91a2-d276a7685c80', 'have_paid': False}
+    │      │       └ 'INSERT INTO users (client_tg_id, order_id, have_paid) VALUES (%(client_tg_id)s, %(order_id)s, %(have_paid)s)'
+    │      └ <method 'execute' of 'psycopg2.extensions.cursor' objects>
+    └ <cursor object at 0x00000248CCA06CE0; closed: -1>
+
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "users_pkey"
+DETAIL:  Key (client_tg_id)=(459471362) already exists.
+
+[SQL: INSERT INTO users (client_tg_id, order_id, have_paid) VALUES (%(client_tg_id)s, %(order_id)s, %(have_paid)s)]
+[parameters: {'client_tg_id': 459471362, 'order_id': '66118174-54c2-4681-91a2-d276a7685c80', 'have_paid': False}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x00000248A9970860>
+    │    └ <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x00000248AB988C90>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA2D290>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 920, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ {'client_tg_id_1': 459471362, 'param_1': 1}
+    │      │       └ 'SELECT users.client_tg_id AS users_client_tg_id, users.order_id AS users_order_id, users.have_paid AS users_have_paid \nFROM...
+    │      └ <method 'execute' of 'psycopg2.extensions.cursor' objects>
+    └ <cursor object at 0x00000248CCA07AE0; closed: -1>
+
+psycopg2.errors.UndefinedFunction: operator does not exist: character varying = integer
+LINE 3: WHERE users.client_tg_id = 459471362 
+                                 ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\main.py", line 380, in <module>
+    executor.start_polling(dispatcher=dp, skip_updates=True, on_startup=on_startup)
+    │        │                        │                                 └ <function on_startup at 0x00000248CCA4F7E0>
+    │        │                        └ <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>
+    │        └ <function start_polling at 0x00000248AA50D6C0>
+    └ <module 'aiogram.utils.executor' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\aiogram\\utils\\executo...
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\utils\executor.py", line 45, in start_polling
+    executor.start_polling(
+    │        └ <function Executor.start_polling at 0x00000248AA50E200>
+    └ <aiogram.utils.executor.Executor object at 0x00000248CB710A10>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\utils\executor.py", line 323, in start_polling
+    loop.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x00000248A8885620>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x00000248A87BF4C0>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x00000248A82ED3A0>
+    └ <Handle <TaskStepMethWrapper object at 0x00000248CCA1DB70>()>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle <TaskStepMethWrapper object at 0x00000248CCA1DB70>()>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle <TaskStepMethWrapper object at 0x00000248CCA1DB70>()>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle <TaskStepMethWrapper object at 0x00000248CCA1DB70>()>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\handler.py", line 117, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+                     │           │        │       └ {}
+                     │           │        └ (<Update {"update_id": 56641863, "message": {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dim...
+                     │           └ <bound method Dispatcher.process_update of <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>>
+                     └ Handler.HandlerObj(handler=<bound method Dispatcher.process_update of <aiogram.dispatcher.dispatcher.Dispatcher object at 0x0...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+                 │    │                │      │      └ <aiogram.types.fields.Field object at 0x00000248AA1F6650>
+                 │    │                │      └ <Update {"update_id": 56641863, "message": {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima...
+                 │    │                └ <function Handler.notify at 0x00000248AA429940>
+                 │    └ <aiogram.dispatcher.handler.Handler object at 0x00000248CC9E39D0>
+                 └ <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\handler.py", line 117, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+                     │           │        │       └ {'state': <aiogram.dispatcher.storage.FSMContext object at 0x00000248CAF2D150>}
+                     │           │        └ (<Message {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima Tatarin", "last_name": "RF", "us...
+                     │           └ <function send_payment_link at 0x00000248CCA4C4A0>
+                     └ Handler.HandlerObj(handler=<function send_payment_link at 0x00000248CCA4C4A0>, spec=FullArgSpec(args=['message', 'state'], va...
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\main.py", line 130, in send_payment_link
+    reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
+                 │                            │       │     │       └ <aiogram.types.fields.Field object at 0x00000248AA11CD10>
+                 │                            │       │     └ <Message {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima Tatarin", "last_name": "RF", "use...
+                 │                            │       └ <aiogram.types.fields.Field object at 0x00000248AA1A2C10>
+                 │                            └ <Message {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima Tatarin", "last_name": "RF", "use...
+                 └ <function get_ikb_to_send_payment_link at 0x00000248ABB41EE0>
+
+> File "C:\xStorage\Projects\PrometeyBot\root\tg\keyboards.py", line 37, in get_ikb_to_send_payment_link
+    link = utils.generate_payment_link(phone_number, user_id)
+           │     │                     │             └ 459471362
+           │     │                     └ '+375297861654'
+           │     └ <function generate_payment_link at 0x00000248ABB40EA0>
+           └ <module 'utils' from 'C:\\xStorage\\Projects\\PrometeyBot\\root\\tg\\utils.py'>
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\utils.py", line 30, in generate_payment_link
+    user = session.query(models.User).filter(models.User.client_tg_id == client_tg_id).first()
+           │       │     │      │            │      │    │               └ 459471362
+           │       │     │      │            │      │    └ <sqlalchemy.orm.attributes.InstrumentedAttribute object at 0x00000248AB8A5440>
+           │       │     │      │            │      └ <class 'root.db.models.User'>
+           │       │     │      │            └ <module 'root.db.models' from 'C:\\xStorage\\Projects\\PrometeyBot\\root\\db\\models.py'>
+           │       │     │      └ <class 'root.db.models.User'>
+           │       │     └ <module 'root.db.models' from 'C:\\xStorage\\Projects\\PrometeyBot\\root\\db\\models.py'>
+           │       └ <function Session.query at 0x00000248AA7FA0C0>
+           └ <sqlalchemy.orm.session.Session object at 0x00000248CC76B910>
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2743, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           │    └ <function Query.limit at 0x00000248AA778A40>
+           └ <sqlalchemy.orm.query.Query object at 0x00000248CC79E490>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2842, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+            │                  │    │      │      │    │       └ <function Session.execute at 0x00000248AA7F8FE0>
+            │                  │    │      │      │    └ <sqlalchemy.orm.session.Session object at 0x00000248CC76B910>
+            │                  │    │      │      └ <sqlalchemy.orm.query.Query object at 0x00000248CB2D7E10>
+            │                  │    │      └ ~_T
+            │                  │    └ <class 'sqlalchemy.engine.result.Result'>
+            │                  └ ~_T
+            └ typing.Union
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2231, in execute
+    return self._execute_internal(
+           │    └ <function Session._execute_internal at 0x00000248AA7F8D60>
+           └ <sqlalchemy.orm.session.Session object at 0x00000248CC76B910>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2126, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                   │      │                 └ <classmethod(<function AbstractORMCompileState.orm_execute_statement at 0x00000248AA696CA0>)>
+                   │      └ <class 'sqlalchemy.orm.context.ORMSelectCompileState'>
+                   └ typing.Any
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 292, in orm_execute_statement
+    result = conn.execute(
+             │    └ <function Connection.execute at 0x00000248A98AD440>
+             └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA2D290>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1413, in execute
+    return meth(
+           └ <bound method ClauseElement._execute_on_connection of <sqlalchemy.sql.selectable.Select object at 0x00000248CCA2D210>>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 483, in _execute_on_connection
+    return connection._execute_clauseelement(
+           │          └ <function Connection._execute_clauseelement at 0x00000248A98AD760>
+           └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA2D290>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+          │    └ <function Connection._execute_context at 0x00000248A98AD940>
+          └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA2D290>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1841, in _execute_context
+    return self._exec_single_context(
+           │    └ <function Connection._exec_single_context at 0x00000248A98AD9E0>
+           └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA2D290>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    │    └ <function Connection._handle_dbapi_exception at 0x00000248A98ADC60>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA2D290>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2339, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+          │                    │              │                 └ UndefinedFunction('operator does not exist: character varying = integer\nLINE 3: WHERE users.client_tg_id = 459471362 \n     ...
+          │                    │              └ (<class 'psycopg2.errors.UndefinedFunction'>, UndefinedFunction('operator does not exist: character varying = integer\nLINE 3...
+          │                    └ <method 'with_traceback' of 'BaseException' objects>
+          └ ProgrammingError('(psycopg2.errors.UndefinedFunction) operator does not exist: character varying = integer\nLINE 3: WHERE use...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x00000248A9970860>
+    │    └ <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x00000248AB988C90>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CCA2D290>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 920, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ {'client_tg_id_1': 459471362, 'param_1': 1}
+    │      │       └ 'SELECT users.client_tg_id AS users_client_tg_id, users.order_id AS users_order_id, users.have_paid AS users_have_paid \nFROM...
+    │      └ <method 'execute' of 'psycopg2.extensions.cursor' objects>
+    └ <cursor object at 0x00000248CCA07AE0; closed: -1>
+
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedFunction) operator does not exist: character varying = integer
+LINE 3: WHERE users.client_tg_id = 459471362 
+                                 ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+[SQL: SELECT users.client_tg_id AS users_client_tg_id, users.order_id AS users_order_id, users.have_paid AS users_have_paid 
+FROM users 
+WHERE users.client_tg_id = %(client_tg_id_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'client_tg_id_1': 459471362, 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+2023-05-11T17:01:43.609915+0300 INFO after creating link
+2023-05-11T17:01:43.680931+0300 ERROR Can't parse inline keyboard button: text buttons are unallowed in the inline keyboard
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\main.py", line 380, in <module>
+    executor.start_polling(dispatcher=dp, skip_updates=True, on_startup=on_startup)
+    │        │                        │                                 └ <function on_startup at 0x00000248CCA4F7E0>
+    │        │                        └ <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>
+    │        └ <function start_polling at 0x00000248AA50D6C0>
+    └ <module 'aiogram.utils.executor' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\aiogram\\utils\\executo...
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\utils\executor.py", line 45, in start_polling
+    executor.start_polling(
+    │        └ <function Executor.start_polling at 0x00000248AA50E200>
+    └ <aiogram.utils.executor.Executor object at 0x00000248CB710A10>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\utils\executor.py", line 323, in start_polling
+    loop.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x00000248A8885620>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x00000248A87BF4C0>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x00000248A82ED3A0>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\handler.py", line 117, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+                     │           │        │       └ {}
+                     │           │        └ (<Update {"update_id": 56641863, "message": {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dim...
+                     │           └ <bound method Dispatcher.process_update of <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>>
+                     └ Handler.HandlerObj(handler=<bound method Dispatcher.process_update of <aiogram.dispatcher.dispatcher.Dispatcher object at 0x0...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+                 │    │                │      │      └ <aiogram.types.fields.Field object at 0x00000248AA1F6650>
+                 │    │                │      └ <Update {"update_id": 56641863, "message": {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima...
+                 │    │                └ <function Handler.notify at 0x00000248AA429940>
+                 │    └ <aiogram.dispatcher.handler.Handler object at 0x00000248CC9E39D0>
+                 └ <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\handler.py", line 117, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+                     │           │        │       └ {'state': <aiogram.dispatcher.storage.FSMContext object at 0x00000248CAF2D150>}
+                     │           │        └ (<Message {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima Tatarin", "last_name": "RF", "us...
+                     │           └ <function send_payment_link at 0x00000248CCA4C4A0>
+                     └ Handler.HandlerObj(handler=<function send_payment_link at 0x00000248CCA4C4A0>, spec=FullArgSpec(args=['message', 'state'], va...
+
+> File "C:\xStorage\Projects\PrometeyBot\root\tg\main.py", line 129, in send_payment_link
+    await message.answer(PAYMENT_LINK_MESSAGE,
+          │       │      └ '\nНажмите на кнопку, чтобы перейти на страницу оплаты.\n\nЕсли у Вас нет кнопки "Оплатить" под этим сообщением, нажмите на /...
+          │       └ <function Message.answer at 0x00000248AA18A200>
+          └ <Message {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima Tatarin", "last_name": "RF", "use...
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\types\message.py", line 438, in answer
+    return await self.bot.send_message(
+                 │    └ <property object at 0x00000248AA02DE90>
+                 └ <Message {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima Tatarin", "last_name": "RF", "use...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\bot\bot.py", line 346, in send_message
+    result = await self.request(api.Methods.SEND_MESSAGE, payload)
+                   │    │       │   │       │             └ {'chat_id': 459471362, 'text': '\nНажмите на кнопку, чтобы перейти на страницу оплаты.\n\nЕсли у Вас нет кнопки "Оплатить" по...
+                   │    │       │   │       └ <aiogram.utils.helper.Item object at 0x00000248AA204950>
+                   │    │       │   └ <class 'aiogram.bot.api.Methods'>
+                   │    │       └ <module 'aiogram.bot.api' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\aiogram\\bot\\api.py'>
+                   │    └ <function BaseBot.request at 0x00000248AA20D260>
+                   └ <aiogram.bot.bot.Bot object at 0x00000248A87D4E10>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\bot\base.py", line 236, in request
+    return await api.make_request(await self.get_session(), self.server, self.__token, method, data, files,
+                 │   │                  │    │              │    │       │             │       │     └ None
+                 │   │                  │    │              │    │       │             │       └ {'chat_id': 459471362, 'text': '\nНажмите на кнопку, чтобы перейти на страницу оплаты.\n\nЕсли у Вас нет кнопки "Оплатить" по...
+                 │   │                  │    │              │    │       │             └ 'sendMessage'
+                 │   │                  │    │              │    │       └ <aiogram.bot.bot.Bot object at 0x00000248A87D4E10>
+                 │   │                  │    │              │    └ TelegramAPIServer(base='https://api.telegram.org/bot{token}/{method}', file='https://api.telegram.org/file/bot{token}/{path}')
+                 │   │                  │    │              └ <aiogram.bot.bot.Bot object at 0x00000248A87D4E10>
+                 │   │                  │    └ <function BaseBot.get_session at 0x00000248AA20CA40>
+                 │   │                  └ <aiogram.bot.bot.Bot object at 0x00000248A87D4E10>
+                 │   └ <function make_request at 0x00000248AA1B7920>
+                 └ <module 'aiogram.bot.api' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\aiogram\\bot\\api.py'>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\bot\api.py", line 140, in make_request
+    return check_result(method, response.content_type, response.status, await response.text())
+           │            │       │        │             │        │             │        └ <function ClientResponse.text at 0x00000248A9D0F420>
+           │            │       │        │             │        │             └ <ClientResponse(https://api.telegram.org/bot5724555976:AAFxd0Ipy9YSR4ZgYBDa-iypq-m1QK2-vp4/sendMessage) [400 Bad Request]>
+           │            │       │        │             │        │               <C...
+           │            │       │        │             │        └ 400
+           │            │       │        │             └ <ClientResponse(https://api.telegram.org/bot5724555976:AAFxd0Ipy9YSR4ZgYBDa-iypq-m1QK2-vp4/sendMessage) [400 Bad Request]>
+           │            │       │        │               <C...
+           │            │       │        └ <property object at 0x00000248A9BD1DF0>
+           │            │       └ <ClientResponse(https://api.telegram.org/bot5724555976:AAFxd0Ipy9YSR4ZgYBDa-iypq-m1QK2-vp4/sendMessage) [400 Bad Request]>
+           │            │         <C...
+           │            └ 'sendMessage'
+           └ <function check_result at 0x00000248AA1B7A60>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\bot\api.py", line 115, in check_result
+    exceptions.BadRequest.detect(description)
+    │          │          │      └ "Bad Request: can't parse inline keyboard button: Text buttons are unallowed in the inline keyboard"
+    │          │          └ <classmethod(<function _MatchErrorMixin.detect at 0x00000248AA011C60>)>
+    │          └ <class 'aiogram.utils.exceptions.BadRequest'>
+    └ <module 'aiogram.utils.exceptions' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\aiogram\\utils\\excep...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\utils\exceptions.py", line 141, in detect
+    raise cls(description)
+          │   └ "bad request: can't parse inline keyboard button: text buttons are unallowed in the inline keyboard"
+          └ <class 'aiogram.utils.exceptions.BadRequest'>
+
+aiogram.utils.exceptions.BadRequest: Can't parse inline keyboard button: text buttons are unallowed in the inline keyboard
+2023-05-11T17:01:43.764386+0300 ERROR (psycopg2.errors.UndefinedFunction) operator does not exist: character varying = integer
+LINE 3: WHERE states.client_tg_id = 459471362 
+                                  ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+[SQL: SELECT states.client_tg_id AS states_client_tg_id, states.current_state AS states_current_state 
+FROM states 
+WHERE states.client_tg_id = %(client_tg_id_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'client_tg_id_1': 459471362, 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x00000248A9970860>
+    │    └ <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x00000248AB988C90>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CEA8B410>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 920, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ {'client_tg_id_1': 459471362, 'param_1': 1}
+    │      │       └ 'SELECT states.client_tg_id AS states_client_tg_id, states.current_state AS states_current_state \nFROM states \nWHERE states...
+    │      └ <method 'execute' of 'psycopg2.extensions.cursor' objects>
+    └ <cursor object at 0x00000248CCA04120; closed: -1>
+
+psycopg2.errors.UndefinedFunction: operator does not exist: character varying = integer
+LINE 3: WHERE states.client_tg_id = 459471362 
+                                  ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+
+
+The above exception was the direct cause of the following exception:
+
+
+Traceback (most recent call last):
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\main.py", line 380, in <module>
+    executor.start_polling(dispatcher=dp, skip_updates=True, on_startup=on_startup)
+    │        │                        │                                 └ <function on_startup at 0x00000248CCA4F7E0>
+    │        │                        └ <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>
+    │        └ <function start_polling at 0x00000248AA50D6C0>
+    └ <module 'aiogram.utils.executor' from 'C:\\xStorage\\Projects\\PrometeyBot\\venv\\Lib\\site-packages\\aiogram\\utils\\executo...
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\utils\executor.py", line 45, in start_polling
+    executor.start_polling(
+    │        └ <function Executor.start_polling at 0x00000248AA50E200>
+    └ <aiogram.utils.executor.Executor object at 0x00000248CB710A10>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\utils\executor.py", line 323, in start_polling
+    loop.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x00000248A8885620>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\windows_events.py", line 321, in run_forever
+    super().run_forever()
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 607, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x00000248A87BF4C0>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 1922, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x00000248A82ED3A0>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "C:\Users\Dima Tatarin\AppData\Local\Programs\Python\Python311\Lib\asyncio\events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\handler.py", line 117, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+                     │           │        │       └ {}
+                     │           │        └ (<Update {"update_id": 56641863, "message": {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dim...
+                     │           └ <bound method Dispatcher.process_update of <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>>
+                     └ Handler.HandlerObj(handler=<bound method Dispatcher.process_update of <aiogram.dispatcher.dispatcher.Dispatcher object at 0x0...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 256, in process_update
+    return await self.message_handlers.notify(update.message)
+                 │    │                │      │      └ <aiogram.types.fields.Field object at 0x00000248AA1F6650>
+                 │    │                │      └ <Update {"update_id": 56641863, "message": {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima...
+                 │    │                └ <function Handler.notify at 0x00000248AA429940>
+                 │    └ <aiogram.dispatcher.handler.Handler object at 0x00000248CC9E39D0>
+                 └ <aiogram.dispatcher.dispatcher.Dispatcher object at 0x00000248CA46B890>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\aiogram\dispatcher\handler.py", line 117, in notify
+    response = await handler_obj.handler(*args, **partial_data)
+                     │           │        │       └ {'state': <aiogram.dispatcher.storage.FSMContext object at 0x00000248CAF2D150>}
+                     │           │        └ (<Message {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima Tatarin", "last_name": "RF", "us...
+                     │           └ <function send_payment_link at 0x00000248CCA4C4A0>
+                     └ Handler.HandlerObj(handler=<function send_payment_link at 0x00000248CCA4C4A0>, spec=FullArgSpec(args=['message', 'state'], va...
+
+  File "C:\xStorage\Projects\PrometeyBot\root\tg\main.py", line 134, in send_payment_link
+    await delete_state_from_db(message.from_user.id)
+          │                    │       └ <aiogram.types.fields.Field object at 0x00000248AA11CD10>
+          │                    └ <Message {"message_id": 796, "from": {"id": 459471362, "is_bot": false, "first_name": "Dima Tatarin", "last_name": "RF", "use...
+          └ <function delete_state_from_db at 0x00000248CC987420>
+
+> File "C:\xStorage\Projects\PrometeyBot\root\tg\main.py", line 67, in delete_state_from_db
+    existing_state = session.query(models.State).filter(models.State.client_tg_id==user_id).first()
+                     │       │     │      │             │      │     │             └ 459471362
+                     │       │     │      │             │      │     └ <sqlalchemy.orm.attributes.InstrumentedAttribute object at 0x00000248AB8A7420>
+                     │       │     │      │             │      └ <class 'root.db.models.State'>
+                     │       │     │      │             └ <module 'root.db.models' from 'C:\\xStorage\\Projects\\PrometeyBot\\root\\db\\models.py'>
+                     │       │     │      └ <class 'root.db.models.State'>
+                     │       │     └ <module 'root.db.models' from 'C:\\xStorage\\Projects\\PrometeyBot\\root\\db\\models.py'>
+                     │       └ <function Session.query at 0x00000248AA7FA0C0>
+                     └ <sqlalchemy.orm.session.Session object at 0x00000248CCA09AD0>
+
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2743, in first
+    return self.limit(1)._iter().first()  # type: ignore
+           │    └ <function Query.limit at 0x00000248AA778A40>
+           └ <sqlalchemy.orm.query.Query object at 0x00000248CC9E2A50>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2842, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+            │                  │    │      │      │    │       └ <function Session.execute at 0x00000248AA7F8FE0>
+            │                  │    │      │      │    └ <sqlalchemy.orm.session.Session object at 0x00000248CCA09AD0>
+            │                  │    │      │      └ <sqlalchemy.orm.query.Query object at 0x00000248CCA2D3D0>
+            │                  │    │      └ ~_T
+            │                  │    └ <class 'sqlalchemy.engine.result.Result'>
+            │                  └ ~_T
+            └ typing.Union
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2231, in execute
+    return self._execute_internal(
+           │    └ <function Session._execute_internal at 0x00000248AA7F8D60>
+           └ <sqlalchemy.orm.session.Session object at 0x00000248CCA09AD0>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2126, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                   │      │                 └ <classmethod(<function AbstractORMCompileState.orm_execute_statement at 0x00000248AA696CA0>)>
+                   │      └ <class 'sqlalchemy.orm.context.ORMSelectCompileState'>
+                   └ typing.Any
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 292, in orm_execute_statement
+    result = conn.execute(
+             │    └ <function Connection.execute at 0x00000248A98AD440>
+             └ <sqlalchemy.engine.base.Connection object at 0x00000248CEA8B410>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1413, in execute
+    return meth(
+           └ <bound method ClauseElement._execute_on_connection of <sqlalchemy.sql.selectable.Select object at 0x00000248CEA8AED0>>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 483, in _execute_on_connection
+    return connection._execute_clauseelement(
+           │          └ <function Connection._execute_clauseelement at 0x00000248A98AD760>
+           └ <sqlalchemy.engine.base.Connection object at 0x00000248CEA8B410>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1637, in _execute_clauseelement
+    ret = self._execute_context(
+          │    └ <function Connection._execute_context at 0x00000248A98AD940>
+          └ <sqlalchemy.engine.base.Connection object at 0x00000248CEA8B410>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1841, in _execute_context
+    return self._exec_single_context(
+           │    └ <function Connection._exec_single_context at 0x00000248A98AD9E0>
+           └ <sqlalchemy.engine.base.Connection object at 0x00000248CEA8B410>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1982, in _exec_single_context
+    self._handle_dbapi_exception(
+    │    └ <function Connection._handle_dbapi_exception at 0x00000248A98ADC60>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CEA8B410>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2339, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+          │                    │              │                 └ UndefinedFunction('operator does not exist: character varying = integer\nLINE 3: WHERE states.client_tg_id = 459471362 \n    ...
+          │                    │              └ (<class 'psycopg2.errors.UndefinedFunction'>, UndefinedFunction('operator does not exist: character varying = integer\nLINE 3...
+          │                    └ <method 'with_traceback' of 'BaseException' objects>
+          └ ProgrammingError('(psycopg2.errors.UndefinedFunction) operator does not exist: character varying = integer\nLINE 3: WHERE sta...
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1963, in _exec_single_context
+    self.dialect.do_execute(
+    │    │       └ <function DefaultDialect.do_execute at 0x00000248A9970860>
+    │    └ <sqlalchemy.dialects.postgresql.psycopg2.PGDialect_psycopg2 object at 0x00000248AB988C90>
+    └ <sqlalchemy.engine.base.Connection object at 0x00000248CEA8B410>
+  File "C:\xStorage\Projects\PrometeyBot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 920, in do_execute
+    cursor.execute(statement, parameters)
+    │      │       │          └ {'client_tg_id_1': 459471362, 'param_1': 1}
+    │      │       └ 'SELECT states.client_tg_id AS states_client_tg_id, states.current_state AS states_current_state \nFROM states \nWHERE states...
+    │      └ <method 'execute' of 'psycopg2.extensions.cursor' objects>
+    └ <cursor object at 0x00000248CCA04120; closed: -1>
+
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedFunction) operator does not exist: character varying = integer
+LINE 3: WHERE states.client_tg_id = 459471362 
+                                  ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+
+[SQL: SELECT states.client_tg_id AS states_client_tg_id, states.current_state AS states_current_state 
+FROM states 
+WHERE states.client_tg_id = %(client_tg_id_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'client_tg_id_1': 459471362, 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/20/f405)

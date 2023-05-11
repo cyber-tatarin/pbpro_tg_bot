@@ -7,5 +7,5 @@ load_dotenv(find_dotenv())
 
 logger = loguru.logger
 logger.add("bot.log", format="{time} {level} {message}", level=os.getenv('LOG_LEVEL'),
-           rotation="1 MB", compression="zip")
+           rotation="10 MB", compression="zip")
 
