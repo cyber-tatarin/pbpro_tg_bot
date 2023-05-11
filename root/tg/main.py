@@ -369,6 +369,9 @@ async def send_task_to_user_manually(user_id, task_number):
         pass
     except Exception as x:
         logger.exception(x)
+    finally:
+        if session.is_active:
+            session.close()
 
 
 # Define a function to restore the user states from the database
