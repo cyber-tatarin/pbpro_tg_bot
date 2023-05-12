@@ -18,7 +18,6 @@ from sqlalchemy.orm import sessionmaker
 from keyboards import *
 import callback_data_models
 import utils
-# from texts import TASKS, WELCOME_MESSAGE, PAYMENT_LINK_MESSAGE, GET_PAYMENT_LINK_MANUALLY
 from root.db import setup as db
 from root.db import models
 from root.gsheets import main as gsh
@@ -170,7 +169,7 @@ async def send_payment_link(message: types.Message, state: FSMContext):
     await state.finish()
     await delete_state_from_db(message.from_user.id)
     loop = asyncio.get_event_loop()
-    loop.create_task(gsh.async_got_link(message.from_user.id, message.from_user.full_name))
+    loop.create_task(gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username))
 
 
 @logger.catch
@@ -421,7 +420,10 @@ async def payment_confirmed(user_id):
 
 async def send_message_to_users_manually(user_ids_list: list, message):
     for user_id in user_ids_list:
-        await bot.send_message(user_id, message)
+        try:
+            await bot.send_message(user_id, message)
+        except ChatNotFound as x:
+            logger.exception(x)
 
 
 async def send_task_to_user_manually(user_id, task_number):

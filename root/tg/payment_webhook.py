@@ -139,12 +139,10 @@ async def send_message_manually(request):
             numeric_values = [int(value) for value in list_of_values if value and value.isnumeric()]
             
             await send_message_to_users_manually(numeric_values, message_text)
+            raise web.HTTPFound('/success')
         except Exception as x:
             logger.exception(x)
-        
-        # Do something with the numeric values, for example, return them as a JSON response
-        return web.json_response({'message': message_text, 'numeric_values': numeric_values,
-                                  'length': len(numeric_values)})
+            raise web.HTTPFound('/fail')
     
     else:
         logger.info('Someone tried to access admin panel without paassword')
@@ -186,17 +184,29 @@ async def send_task_manually(request):
         data = await request.post()
         user_id = data['id']
         # if data['task_number'] > 7
-        task_number = str(data['task_number'])
+        task_number = data['task_number']
         password = data['pass']
     except Exception as x:
         logger.exception(x)
         raise web.HTTPFound('/fail')
+
+    session = db.Session()
+    try:
+        number_of_tasks_query = session.query(models.Text).filter(models.Text.id < 50)
+        number_of_tasks = number_of_tasks_query.count()
+    except Exception as x:
+        logger.exception(x)
+        return
     
-    if password == os.getenv('WEB_PASSWORD'):
+    finally:
+        if session.is_active:
+            session.close()
+    
+    if password == os.getenv('WEB_PASSWORD') and int(task_number) <= number_of_tasks:
         await send_task_to_user_manually(user_id, task_number)
         raise web.HTTPFound('/success')
     else:
-        logger.info('Someone tried to access admin panel without password')
+        logger.info('Someone tried to access admin panel without password or input wrong task number')
         raise web.HTTPFound('/fail')
     
     
