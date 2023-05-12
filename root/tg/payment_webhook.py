@@ -139,10 +139,11 @@ async def send_message_manually(request):
             numeric_values = [int(value) for value in list_of_values if value and value.isnumeric()]
             
             await send_message_to_users_manually(numeric_values, message_text)
-            raise web.HTTPFound('/success')
         except Exception as x:
             logger.exception(x)
             raise web.HTTPFound('/fail')
+        
+        raise web.HTTPFound('/success')
     
     else:
         logger.info('Someone tried to access admin panel without paassword')
