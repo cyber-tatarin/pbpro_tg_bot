@@ -409,7 +409,7 @@ async def payment_confirmed(user_id):
             #                        reply_markup=get_ikb_to_get_task('1'))
             
             await bot.send_message(user_id,
-                                   'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат марафона: https://t.me/+z3KnjLUsgsw0YTYy\n '
+                                   'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат марафона:\nhttps://t.me/+z3KnjLUsgsw0YTYy\n\n'
                                    'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
         
         except IntegrityError as x:
