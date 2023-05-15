@@ -250,7 +250,7 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
             session.close()
     
     if task_number > number_of_tasks:
-        await bot.send_message(receiver_id, 'Ваше задание приняли!')
+        await bot.send_message(receiver_id, 'Твое задание приняли!')
         await bot.send_message(receiver_id, 'Ура, все задания выполнены!')
     else:
         reply_markup = get_ikb_to_get_task(str(task_number))
@@ -413,7 +413,7 @@ async def payment_confirmed(user_id):
                                    'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
         
         except IntegrityError as x:
-            await bot.send_message(user_id, 'Ты уже получал задание задание')
+            await bot.send_message(user_id, 'Ты уже получал задание')
         except Exception as x:
             logger.exception(x)
             await bot.send_message(user_id, 'У нас проблемы с базой данных. Если ты видишь это сообщение, '
