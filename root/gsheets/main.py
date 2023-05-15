@@ -10,17 +10,16 @@ from root.logger.log import logger
 
 logger = logger
 key_json = os.path.abspath(os.path.join(os.path.pardir, 'gsheets', 'gsheets_key.json'))
-# Authenticate using service account credentials
-gc = pygsheets.authorize(service_file=key_json)
-
-# Open the Google Sheet by name
-sheet = gc.open('ProjectBox telegram bot overview')
-# Select the first worksheet in the Google Sheet
-worksheet = sheet[0]
 
 
 def find_row_number(user_id):
     try:
+        # Authenticate using service account credentials
+        gc = pygsheets.authorize(service_file=key_json)
+    
+        # Open the Google Sheet by name
+        sheet = gc.open('ProjectBox telegram bot overview')
+
         cells_list_of_lists = sheet.find(str(user_id), matchEntireCell=True)    # [[]]
         if cells_list_of_lists[0]:   # empty list object considered as false
             return cells_list_of_lists[0][0].row
@@ -32,6 +31,14 @@ def find_row_number(user_id):
 
 def got_link(user_id, user_full_name, username):
     try:
+        # Authenticate using service account credentials
+        gc = pygsheets.authorize(service_file=key_json)
+    
+        # Open the Google Sheet by name
+        sheet = gc.open('ProjectBox telegram bot overview')
+        # Select the first worksheet in the Google Sheet
+        worksheet = sheet[0]
+        
         # current_time = datetime.now()
         # current_time = now.strftime("%d-%m-%Y %H:%M")
         
@@ -71,6 +78,14 @@ def got_link(user_id, user_full_name, username):
 
 def paid(user_id):
     try:
+        # Authenticate using service account credentials
+        gc = pygsheets.authorize(service_file=key_json)
+    
+        # Open the Google Sheet by name
+        sheet = gc.open('ProjectBox telegram bot overview')
+        # Select the first worksheet in the Google Sheet
+        worksheet = sheet[0]
+        
         # current_time = datetime.now()
         # current_time = now.strftime("%d-%m-%Y %H:%M")
         
@@ -96,6 +111,14 @@ def paid(user_id):
         
 def on_task(user_id, task_number):
     try:
+        # Authenticate using service account credentials
+        gc = pygsheets.authorize(service_file=key_json)
+    
+        # Open the Google Sheet by name
+        sheet = gc.open('ProjectBox telegram bot overview')
+        # Select the first worksheet in the Google Sheet
+        worksheet = sheet[0]
+        
         # current_time = datetime.now()
         # current_time = now.strftime("%d-%m-%Y %H:%M")
         
