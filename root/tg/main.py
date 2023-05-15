@@ -429,9 +429,10 @@ async def send_message_to_users_manually(user_ids_list: list, message):
     for user_id in user_ids_list:
         try:
             await bot.send_message(user_id, message)
-            await asyncio.sleep(0.036)
         except ChatNotFound as x:
             logger.exception(x)
+        finally:
+            await asyncio.sleep(0.036)
 
 
 async def send_task_to_user_manually(user_id, task_number):
