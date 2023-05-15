@@ -82,8 +82,8 @@ async def start(message: types.Message):
         await message.answer(WELCOME_MESSAGE)
     except Exception as x:
         logger.exception(x)
-        await message.answer('У нас проблемы с базой данных. Если Вы видите это сообщение, '
-                             'напишите, пожалуйста, мне @dimatatatarin')
+        await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                             'напиши, пожалуйста, мне @dimatatatarin')
         return
     finally:
         if session.is_active:
@@ -98,7 +98,7 @@ async def start(message: types.Message):
 @dp.message_handler(state='*', commands=['help'])
 async def help_command(message: types.Message):
     await message.delete()
-    await message.answer('Если Вы столкнулись с проблемой, напишите мне @dimatatatarin. Мы все решим :)')
+    await message.answer('Если появилась какая-то проблема, напиши мне @dimatatatarin. Мы все решим :)')
     await message.answer(f'Вот Ваш ID:')
     await message.answer(message.from_user.id)
     await message.answer('Он может понадобиться для решения проблемы')
@@ -108,9 +108,9 @@ async def help_command(message: types.Message):
 @dp.message_handler(state='*', commands=['checkpayment'])
 async def check_payment_command(message: types.Message):
     await message.delete()
-    answer_message = 'Пока Ваша оплата не пришла. Ожидание оплаты может доходить до 15 минут. ' \
-                     'Но не переживайте, мы обязательно разберемся, даже если что-то пошло не так\n' \
-                     'Нажмите на /help, если Вам нужна дополнительная помощь'
+    answer_message = 'Пока твоя оплата не пришла. Ожидание оплаты может доходить до 15 минут. ' \
+                     'Но не переживай, мы обязательно разберемся, даже если что-то пошло не так\n' \
+                     'Нажми на /help, если Вам нужна дополнительная помощь'
     
     try:
         session = db.Session()
@@ -130,16 +130,16 @@ async def send_payment_link_manually(message: types.Message):
     session = db.Session()
     try:
         GET_PAYMENT_LINK_MANUALLY = session.query(models.Text).filter(models.Text.id == 92).first().text
-
+    
     except Exception as x:
         logger.exception(x)
-        await message.answer('У нас проблемы с базой данных. Если Вы видите это сообщение, '
-                             'напишите, пожалуйста, мне @dimatatatarin')
+        await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                             'напиши, пожалуйста, мне @dimatatatarin')
         return
     finally:
         if session.is_active:
             session.close()
-
+    
     await message.answer(GET_PAYMENT_LINK_MANUALLY)
     await message.delete()
     await TaskStates.input_phone_number.set()
@@ -154,8 +154,8 @@ async def send_payment_link(message: types.Message, state: FSMContext):
         PAYMENT_LINK_MESSAGE = session.query(models.Text).filter(models.Text.id == 93).first().text
     except Exception as x:
         logger.exception(x)
-        await message.answer('У нас проблемы с базой данных. Если Вы видите это сообщение, '
-                             'напишите, пожалуйста, мне @dimatatatarin')
+        await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                             'напиши, пожалуйста, мне @dimatatatarin')
         return
     finally:
         if session.is_active:
@@ -168,10 +168,10 @@ async def send_payment_link(message: types.Message, state: FSMContext):
         logger.exception(x)
     await state.finish()
     await delete_state_from_db(message.from_user.id)
-    # loop = asyncio.get_event_loop()
-    # loop.create_task(gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username))
+    loop = asyncio.get_event_loop()
+    loop.create_task(gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username))
     
-    await gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username)
+    # await gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username)
 
 
 @logger.catch
@@ -185,8 +185,8 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
     except Exception as x:
         logger.exception(x)
         await bot.send_message(callback_query.from_user.id,
-                               'У нас проблемы с базой данных. Если Вы видите это сообщение, '
-                               'напишите, пожалуйста, мне @dimatatatarin')
+                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                               'напиши, пожалуйста, мне @dimatatatarin')
         return
     finally:
         if session.is_active:
@@ -199,11 +199,11 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
     
     await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
     await callback_query.answer(cache_time=0)
-    # loop = asyncio.get_event_loop()
-    # loop.create_task(gsh.async_on_task(callback_query.from_user.id, task_number))
+    loop = asyncio.get_event_loop()
+    loop.create_task(gsh.async_on_task(callback_query.from_user.id, task_number))
     
-    await gsh.async_on_task(callback_query.from_user.id, task_number)
-    
+    # await gsh.async_on_task(callback_query.from_user.id, task_number)
+
 
 @logger.catch
 @dp.message_handler(state=TaskStates.task_is_done, content_types=['any'])
@@ -217,7 +217,7 @@ async def check_task(message: types.Message, state: FSMContext):
     
     reply_markup = get_ikb_to_check_users_tasks(message.from_user.id)
     await utils.send_and_copy_message(bot, ADMIN_ID, message, message_for_admin, reply_markup)
-    await message.answer('Ваше задание отправлено на проверку. Вы получите ответ, как только задание будет проверено')
+    await message.answer('Твое задание отправлено на проверку. Ты получишь ответ, как только задание будет проверено')
     await state.finish()
     await delete_state_from_db(message.from_user.id)
 
@@ -234,7 +234,7 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
     session.commit()
     if session.is_active:
         session.close()
-
+    
     session = db.Session()
     try:
         number_of_tasks_query = session.query(models.Text).filter(models.Text.id < 50)
@@ -242,8 +242,8 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
     except Exception as x:
         logger.exception(x)
         await bot.send_message(callback_query.from_user.id,
-                               'У нас проблемы с базой данных. Если Вы видите это сообщение, '
-                               'напишите, пожалуйста, мне @dimatatatarin')
+                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                               'напиши, пожалуйста, мне @dimatatatarin')
         return
     finally:
         if session.is_active:
@@ -251,10 +251,10 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
     
     if task_number > number_of_tasks:
         await bot.send_message(receiver_id, 'Ваше задание приняли!')
-        await bot.send_message(receiver_id, 'Ура, Вы выполнили все задания!')
+        await bot.send_message(receiver_id, 'Ура, все задания выполнены!')
     else:
         reply_markup = get_ikb_to_get_task(str(task_number))
-        await bot.send_message(receiver_id, 'Ваше задание приняли! Вы готовы выполнить следующее?',
+        await bot.send_message(receiver_id, 'Твое задание приняли! Хочешь получить следующее?',
                                reply_markup=reply_markup)
     
     await bot.edit_message_reply_markup(ADMIN_ID, callback_query.message.message_id, reply_markup=None)
@@ -266,8 +266,7 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
 async def decline_task(callback_query: CallbackQuery, callback_data: dict):
     receiver_id = callback_data['receiver_id']
     
-    await bot.send_message(receiver_id, 'Ваше задание не приняли, комментарий не дали. '
-                                        'Мы хотим, чтобы Вы подумали сами :)',
+    await bot.send_message(receiver_id, 'Твое задание не приняли, комментарий не дали.',
                            reply_markup=get_ikb_to_resend_declined_answer())
     await bot.edit_message_reply_markup(ADMIN_ID, callback_query.message.message_id, reply_markup=None)
     await callback_query.answer(cache_time=0)
@@ -330,7 +329,7 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
     if session.is_active:
         session.close()
     
-    message_for_client = f'Вот ответ от Вашего ментора:'
+    message_for_client = f'Вот ответ от твоего ментора:'
     session = db.Session()
     try:
         number_of_tasks_query = session.query(models.Text).filter(models.Text.id < 50)
@@ -338,17 +337,17 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
     except Exception as x:
         logger.exception(x)
         await bot.send_message(message.from_user.id,
-                               'У нас проблемы с базой данных. Если Вы видите это сообщение, '
-                               'напишите, пожалуйста, мне @dimatatatarin')
+                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                               'напиши, пожалуйста, мне @dimatatatarin')
         return
     finally:
         if session.is_active:
             session.close()
-
+    
     if task_number > number_of_tasks:
         await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
                                           divider=False)
-        await bot.send_message(receiver_id, 'Ура, Вы выполнили все задания!')
+        await bot.send_message(receiver_id, 'Ура! Все задания выполнены!')
     else:
         reply_markup = get_ikb_to_get_task(str(task_number))
         await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
@@ -369,7 +368,7 @@ async def send_comment_after_decline(message: types.Message, state: FSMContext):
     
     await bot.delete_message(chat_id, cancel_message_id)
     
-    message_for_client = f'Ваше решение не приняли. Вот ответ от Вашего ментора:'
+    message_for_client = f'Твое решение не приняли. Вот ответ от ментора:'
     
     await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
                                       reply_markup=get_ikb_to_resend_declined_answer(), divider=False)
@@ -406,15 +405,19 @@ async def payment_confirmed(user_id):
         try:
             session.add(task)
             session.commit()
-            await bot.send_message(user_id, 'Оплата прошла успешно, Вы готовы получить первое задание?',
-                                   reply_markup=get_ikb_to_get_task('1'))
+            # await bot.send_message(user_id, 'Оплата прошла успешно, Вы готовы получить первое задание?',
+            #                        reply_markup=get_ikb_to_get_task('1'))
+            
+            await bot.send_message(user_id,
+                                   'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат марафона: https://t.me/+z3KnjLUsgsw0YTYy\n '
+                                   'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
         
         except IntegrityError as x:
-            await bot.send_message(user_id, 'Вы уже получили задание')
+            await bot.send_message(user_id, 'Ты уже получал задание задание')
         except Exception as x:
             logger.exception(x)
-            await bot.send_message(user_id, 'У нас возникли проблемы с базой данных. Если Вы видите это сообщение,'
-                                            'напишите, пожалуйста, мне @dimatatatarin')
+            await bot.send_message(user_id, 'У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                                            'напиши, пожалуйста, мне @dimatatatarin')
         finally:
             if session.is_active:
                 session.close()
@@ -440,7 +443,7 @@ async def send_task_to_user_manually(user_id, task_number):
     # loop.create_task(gsh.async_on_task(user_id, task_number))
     
     reply_markup = get_ikb_to_get_task(str(task_number))
-    await bot.send_message(user_id, 'Нажмите кнопку ниже, чтобы получить задание',
+    await bot.send_message(user_id, 'Нажми кнопку ниже, чтобы получить задание',
                            reply_markup=reply_markup)
     
     task = models.Task(client_tg_id=user_id, current_task=task_number)
