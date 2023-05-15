@@ -168,8 +168,10 @@ async def send_payment_link(message: types.Message, state: FSMContext):
         logger.exception(x)
     await state.finish()
     await delete_state_from_db(message.from_user.id)
-    loop = asyncio.get_event_loop()
-    loop.create_task(gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username))
+    # loop = asyncio.get_event_loop()
+    # loop.create_task(gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username))
+    
+    await gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username)
 
 
 @logger.catch
@@ -197,9 +199,11 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
     
     await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
     await callback_query.answer(cache_time=0)
-    loop = asyncio.get_event_loop()
-    loop.create_task(gsh.async_on_task(callback_query.from_user.id, task_number))
-
+    # loop = asyncio.get_event_loop()
+    # loop.create_task(gsh.async_on_task(callback_query.from_user.id, task_number))
+    
+    await gsh.async_on_task(callback_query.from_user.id, task_number)
+    
 
 @logger.catch
 @dp.message_handler(state=TaskStates.task_is_done, content_types=['any'])
