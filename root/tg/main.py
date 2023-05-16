@@ -410,6 +410,8 @@ async def payment_confirmed(user_id):
             
             await bot.send_message(user_id,
                                    'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат марафона:\nhttps://t.me/+z3KnjLUsgsw0YTYy\n\n'
+                                   'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»\n'
+                                   'https://drive.google.com/file/d/1bjTh_qqWYQSHAlnS10Mdgf7AJgdeFQau/view?usp=share_link\n\n'
                                    'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
         
         except IntegrityError as x:
