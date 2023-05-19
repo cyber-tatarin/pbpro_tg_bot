@@ -41,6 +41,7 @@ class TaskStates(StatesGroup):
     task_is_done = State()
     send_comment_after_accept = State()
     send_comment_after_decline = State()
+    transfer_to_bel_card_is_done = State()
 
 
 async def save_state_into_db(user_id, state):
@@ -74,12 +75,12 @@ async def delete_state_from_db(user_id):
 
 
 @logger.catch
-@dp.message_handler(state='*', commands=['start'])
+@dp.message_handler(state='*', commands=['start', 'getpaymentlink'])
 async def start(message: types.Message):
     session = db.Session()
     try:
-        WELCOME_MESSAGE = session.query(models.Text).filter(models.Text.id == 91).first().text
-        await message.answer(WELCOME_MESSAGE)
+        CHOOSE_CARD_MESSAGE = session.query(models.Text).filter(models.Text.id == 91).first().text
+        await message.answer(CHOOSE_CARD_MESSAGE, reply_markup=get_ikb_to_choose_payment_card())
     except Exception as x:
         logger.exception(x)
         await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
@@ -90,8 +91,45 @@ async def start(message: types.Message):
             session.close()
     
     await message.delete()
+
+
+@logger.catch
+@dp.callback_query_handler(lambda c: c.data == 'bel_card')
+async def send_card_number(callback_query: CallbackQuery):
+    await callback_query.message.answer('Вот номер карты:')
+    await callback_query.message.answer('xxxx xxxx xxxx xxxx')
+    await callback_query.message.answer('Переведи на эту карту 800 рублей и отправь скриншот в этот чат. '
+                                        'Ты получишь доступ, как только твоя оплата будет подтверждена администратором')
+
+    await callback_query.message.delete()
+    await TaskStates.transfer_to_bel_card_is_done.set()
+    await save_state_into_db(callback_query.from_user.id, 'TaskStates:transfer_to_bel_card_is_done')
+
+    loop = asyncio.get_event_loop()
+    loop.create_task(gsh.async_got_link(callback_query.from_user.id,
+                                        callback_query.from_user.full_name,
+                                        callback_query.from_user.username))
+
+
+@logger.catch
+@dp.callback_query_handler(lambda c: c.data == 'rus_card')
+async def get_phone_number_for_payment_link(callback_query: CallbackQuery):
+    session = db.Session()
+    try:
+        GET_PHONE_NUMBER_MESSAGE = session.query(models.Text).filter(models.Text.id == 92).first().text
+        await callback_query.message.answer(GET_PHONE_NUMBER_MESSAGE)
+    except Exception as x:
+        logger.exception(x)
+        await callback_query.message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                                            'напиши, пожалуйста, мне @dimatatatarin')
+        return
+    finally:
+        if session.is_active:
+            session.close()
+    
+    await callback_query.message.delete()
     await TaskStates.input_phone_number.set()
-    await save_state_into_db(message.from_user.id, 'TaskStates:input_phone_number')
+    await save_state_into_db(callback_query.from_user.id, 'TaskStates:input_phone_number')
 
 
 @logger.catch
@@ -124,26 +162,23 @@ async def check_payment_command(message: types.Message):
         logger.exception(x)
 
 
-@logger.catch
-@dp.message_handler(state='*', commands=['getpaymentlink'])
-async def send_payment_link_manually(message: types.Message):
-    session = db.Session()
-    try:
-        GET_PAYMENT_LINK_MANUALLY = session.query(models.Text).filter(models.Text.id == 92).first().text
-    
-    except Exception as x:
-        logger.exception(x)
-        await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                             'напиши, пожалуйста, мне @dimatatatarin')
-        return
-    finally:
-        if session.is_active:
-            session.close()
-    
-    await message.answer(GET_PAYMENT_LINK_MANUALLY)
-    await message.delete()
-    await TaskStates.input_phone_number.set()
-    await save_state_into_db(message.from_user.id, 'TaskStates:input_phone_number')
+# @logger.catch
+# @dp.message_handler(state='*', commands=['getpaymentlink'])
+# async def get_payment_link(message: types.Message):
+#     session = db.Session()
+#     try:
+#         CHOOSE_CARD_MESSAGE = session.query(models.Text).filter(models.Text.id == 91).first().text
+#         await message.answer(CHOOSE_CARD_MESSAGE, reply_markup=get_ikb_to_choose_payment_card())
+#     except Exception as x:
+#         logger.exception(x)
+#         await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
+#                              'напиши, пожалуйста, мне @dimatatatarin')
+#         return
+#     finally:
+#         if session.is_active:
+#             session.close()
+#
+#     await message.delete()
 
 
 @logger.catch
@@ -174,6 +209,55 @@ async def send_payment_link(message: types.Message, state: FSMContext):
     # await gsh.async_got_link(message.from_user.id, message.from_user.full_name, message.from_user.username)
 
 
+@logger.catch
+@dp.message_handler(state=TaskStates.transfer_to_bel_card_is_done, content_types=['any'])
+async def check_task(message: types.Message, state: FSMContext):
+    
+    message_for_admin = f'Чек оплаты от пользователя {message.from_user.full_name} ({message.from_user.username}):'
+    
+    reply_markup = get_ikb_to_confirm_bel_card_payment(message.from_user.id)
+    await utils.send_and_copy_message(bot, ADMIN_ID, message, message_for_admin, reply_markup)
+    await message.answer('Твой чек отправлен на проверку. Ты получишь доступ к марафону и подарок, '
+                         'как только чек будет проверен')
+    await state.finish()
+    await delete_state_from_db(message.from_user.id)
+    
+    
+@logger.catch
+@dp.callback_query_handler(callback_data_models.confirm_bel_card_payment_cb_data.filter())
+async def confirm_bel_card_payment(callback_query: CallbackQuery, callback_data: dict):
+    user_id = callback_data['receiver_id']
+    try:
+        task = models.Task(client_tg_id=user_id, current_task=1)
+        session = db.Session()
+        try:
+            session.add(task)
+            session.commit()
+            # await bot.send_message(user_id, 'Оплата прошла успешно, Вы готовы получить первое задание?',
+            #                        reply_markup=get_ikb_to_get_task('1'))
+        
+            await bot.send_message(user_id,
+                                   'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат марафона:\nhttps://t.me/+z3KnjLUsgsw0YTYy\n\n'
+                                   'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»\n'
+                                   'https://drive.google.com/file/d/1bjTh_qqWYQSHAlnS10Mdgf7AJgdeFQau/view?usp=share_link\n\n'
+                                   'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
+            
+            loop = asyncio.get_event_loop()
+            loop.create_task(gsh.async_paid(user_id))
+    
+        except IntegrityError as x:
+            await bot.send_message(user_id, 'Ты уже получал задание')
+        except Exception as x:
+            logger.exception(x)
+            await bot.send_message(user_id, 'У нас проблемы с базой данных. Если ты видишь это сообщение, '
+                                            'напиши, пожалуйста, мне @dimatatatarin')
+        finally:
+            if session.is_active:
+                session.close()
+    except ChatNotFound:
+        pass
+    
+    
 @logger.catch
 @dp.callback_query_handler(callback_data_models.send_task_cb_data.filter())
 async def send_task(callback_query: CallbackQuery, callback_data: dict):
@@ -431,7 +515,10 @@ async def send_message_to_users_manually(user_ids_list: list, message):
     for user_id in user_ids_list:
         try:
             await bot.send_message(user_id, message)
+            logger.info(f'message is sent to {user_id}')
         except ChatNotFound as x:
+            logger.exception(x)
+        except Exception as x:
             logger.exception(x)
         finally:
             await asyncio.sleep(0.036)

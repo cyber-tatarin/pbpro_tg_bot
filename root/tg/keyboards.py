@@ -57,3 +57,22 @@ def get_ikb_to_resend_declined_answer():
                               callback_data='resend_declined_answer')
     ikb_to_resend_declined_answer.add(b1)
     return ikb_to_resend_declined_answer
+
+
+@logger.catch
+def get_ikb_to_choose_payment_card():
+    ikb_to_choose_payment_card = InlineKeyboardMarkup(row_width=1)
+    b1 = InlineKeyboardButton(text='Российская карта', callback_data='rus_card')
+    b2 = InlineKeyboardButton(text='Белорусская карта', callback_data='bel_card')
+    ikb_to_choose_payment_card.add(b1, b2)
+    return ikb_to_choose_payment_card
+
+
+@logger.catch
+def get_ikb_to_confirm_bel_card_payment(user_id):
+    ikb_to_check_users_tasks = InlineKeyboardMarkup(row_width=1)
+    b1 = InlineKeyboardButton(text='Принять оплату и дать доступ',
+                              callback_data=callback_data_models.confirm_bel_card_payment_cb_data.new(user_id))
+    ikb_to_check_users_tasks.add(b1)
+    return ikb_to_check_users_tasks
+    

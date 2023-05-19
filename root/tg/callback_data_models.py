@@ -7,4 +7,4 @@ decline_task_cb_data = CallbackData('Dec', 'receiver_id')
 
 send_task_cb_data = CallbackData('Task', 'task_number')
 
-    
+confirm_bel_card_payment_cb_data = CallbackData('Bel', 'receiver_id')
