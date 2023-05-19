@@ -227,8 +227,12 @@ async def check_task(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(callback_data_models.confirm_bel_card_payment_cb_data.filter())
 async def confirm_bel_card_payment(callback_query: CallbackQuery, callback_data: dict):
     user_id = callback_data['receiver_id']
-    await payment_confirmed(user_id)
     
+    loop = asyncio.get_event_loop()
+    loop.create_task(gsh.async_paid(user_id))
+    
+    await payment_confirmed(user_id)
+
     # try:
     #     task = models.Task(client_tg_id=user_id, current_task=1)
     #     session = db.Session()
@@ -496,12 +500,14 @@ async def payment_confirmed(user_id):
             #                        reply_markup=get_ikb_to_get_task('1'))
             
             await bot.send_message(user_id,
-                                   'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат марафона:\nhttps://t.me/+z3KnjLUsgsw0YTYy\n\n'
+                                   'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат '
+                                   'марафона:\nhttps://t.me/+z3KnjLUsgsw0YTYy\n\n'
                                    'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»\n'
-                                   'https://drive.google.com/file/d/1bjTh_qqWYQSHAlnS10Mdgf7AJgdeFQau/view?usp=share_link\n\n'
+                                   'https://drive.google.com/file/d/1bjTh_qqWYQSHAlnS10Mdgf7AJgdeFQau/view?usp'
+                                   '=share_link\n\n'
                                    'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
         
-        except IntegrityError as x:
+        except IntegrityError:
             await bot.send_message(user_id, 'Ты уже получал задание')
         except Exception as x:
             logger.exception(x)
@@ -545,7 +551,7 @@ async def send_task_to_user_manually(user_id, task_number):
     try:
         session.add(task)
         session.commit()
-    except IntegrityError as x:
+    except IntegrityError:
         pass
     except Exception as x:
         logger.exception(x)
