@@ -213,7 +213,7 @@ async def send_payment_link(message: types.Message, state: FSMContext):
 @dp.message_handler(state=TaskStates.transfer_to_bel_card_is_done, content_types=['any'])
 async def check_task(message: types.Message, state: FSMContext):
     
-    message_for_admin = f'Чек оплаты от пользователя {message.from_user.full_name} ({message.from_user.username}):'
+    message_for_admin = f'Чек оплаты от пользователя {message.from_user.full_name} (@{message.from_user.username}):'
     
     reply_markup = get_ikb_to_confirm_bel_card_payment(message.from_user.id)
     await utils.send_and_copy_message(bot, ADMIN_ID, message, message_for_admin, reply_markup)
@@ -227,35 +227,38 @@ async def check_task(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(callback_data_models.confirm_bel_card_payment_cb_data.filter())
 async def confirm_bel_card_payment(callback_query: CallbackQuery, callback_data: dict):
     user_id = callback_data['receiver_id']
-    try:
-        task = models.Task(client_tg_id=user_id, current_task=1)
-        session = db.Session()
-        try:
-            session.add(task)
-            session.commit()
-            # await bot.send_message(user_id, 'Оплата прошла успешно, Вы готовы получить первое задание?',
-            #                        reply_markup=get_ikb_to_get_task('1'))
-        
-            await bot.send_message(user_id,
-                                   'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат марафона:\nhttps://t.me/+z3KnjLUsgsw0YTYy\n\n'
-                                   'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»\n'
-                                   'https://drive.google.com/file/d/1bjTh_qqWYQSHAlnS10Mdgf7AJgdeFQau/view?usp=share_link\n\n'
-                                   'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
-            
-            loop = asyncio.get_event_loop()
-            loop.create_task(gsh.async_paid(user_id))
+    await payment_confirmed(user_id)
     
-        except IntegrityError as x:
-            await bot.send_message(user_id, 'Ты уже получал задание')
-        except Exception as x:
-            logger.exception(x)
-            await bot.send_message(user_id, 'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                                            'напиши, пожалуйста, мне @dimatatatarin')
-        finally:
-            if session.is_active:
-                session.close()
-    except ChatNotFound:
-        pass
+    # try:
+    #     task = models.Task(client_tg_id=user_id, current_task=1)
+    #     session = db.Session()
+    #     try:
+    #         session.add(task)
+    #         session.commit()
+    #         # await bot.send_message(user_id, 'Оплата прошла успешно, Вы готовы получить первое задание?',
+    #         #                        reply_markup=get_ikb_to_get_task('1'))
+    #
+    #         await bot.send_message(user_id,
+    #                                'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат марафона:
+    #                                \nhttps://t.me/+z3KnjLUsgsw0YTYy\n\n'
+    #                                'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»\n'
+    #                                'https://drive.google.com/file/d/1bjTh_qqWYQSHAlnS10Mdgf7AJgdeFQau/view?usp=share_link\n\n'
+    #                                'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
+    #
+    #         loop = asyncio.get_event_loop()
+    #         loop.create_task(gsh.async_paid(user_id))
+    #
+    #     except IntegrityError as x:
+    #         await bot.send_message(user_id, 'Ты уже получал задание')
+    #     except Exception as x:
+    #         logger.exception(x)
+    #         await bot.send_message(user_id, 'У нас проблемы с базой данных. Если ты видишь это сообщение, '
+    #                                         'напиши, пожалуйста, мне @dimatatatarin')
+    #     finally:
+    #         if session.is_active:
+    #             session.close()
+    # except ChatNotFound:
+    #     pass
     
     
 @logger.catch
