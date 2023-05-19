@@ -232,6 +232,9 @@ async def confirm_bel_card_payment(callback_query: CallbackQuery, callback_data:
     loop.create_task(gsh.async_paid(user_id))
     
     await payment_confirmed(user_id)
+    
+    await bot.edit_message_reply_markup(ADMIN_ID, callback_query.message.message_id, reply_markup=None)
+    await callback_query.answer(cache_time=0)
 
     # try:
     #     task = models.Task(client_tg_id=user_id, current_task=1)
