@@ -33,7 +33,8 @@ storage = MemoryStorage()
 
 dp = Dispatcher(bot=bot, storage=storage)
 
-ADMIN_ID = 459471362
+# ADMIN_ID = 459471362
+ADMIN_ID = 762424943
 
 
 class TaskStates(StatesGroup):
