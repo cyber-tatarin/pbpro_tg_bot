@@ -270,7 +270,7 @@ async def confirm_bel_card_payment(callback_query: CallbackQuery, callback_data:
     
     
 @logger.catch
-@dp.callback_query_handler(callback_data_models.send_task_cb_data.filter())
+@dp.callback_query_handler(callback_data_models.send_task_cb_data.filter(), state='*')
 async def send_task(callback_query: CallbackQuery, callback_data: dict):
     task_number = callback_data['task_number']
     
