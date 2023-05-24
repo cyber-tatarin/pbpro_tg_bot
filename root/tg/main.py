@@ -99,7 +99,7 @@ async def start(message: types.Message):
 async def send_card_number(callback_query: CallbackQuery):
     await callback_query.message.answer('Вот номер карты:')
     await callback_query.message.answer('5442064534170965')
-    await callback_query.message.answer('Переведи на эту карту 800 рублей и отправь скриншот в этот чат. '
+    await callback_query.message.answer('Переведи на эту карту $10 по курсу и отправь скриншот в этот чат. '
                                         'Ты получишь доступ, как только твоя оплата будет подтверждена администратором')
 
     await callback_query.message.delete()
