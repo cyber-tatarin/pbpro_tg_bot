@@ -98,7 +98,7 @@ async def start(message: types.Message):
 @dp.callback_query_handler(lambda c: c.data == 'bel_card')
 async def send_card_number(callback_query: CallbackQuery):
     await callback_query.message.answer('Вот номер карты:')
-    await callback_query.message.answer('xxxx xxxx xxxx xxxx')
+    await callback_query.message.answer('5442064534170965')
     await callback_query.message.answer('Переведи на эту карту 800 рублей и отправь скриншот в этот чат. '
                                         'Ты получишь доступ, как только твоя оплата будет подтверждена администратором')
 
@@ -509,7 +509,8 @@ async def payment_confirmed(user_id):
                                    'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»\n'
                                    'https://drive.google.com/file/d/1bjTh_qqWYQSHAlnS10Mdgf7AJgdeFQau/view?usp'
                                    '=share_link\n\n'
-                                   'Уже 22 мая ты получишь свое первое задание. Будь на связи!')
+                                   'Нажми на кнопку под сообщением, чтобы получить первое задание',
+                                   reply_markup=get_ikb_to_get_task('1'))
         
         except IntegrityError:
             await bot.send_message(user_id, 'Ты уже получал задание')
