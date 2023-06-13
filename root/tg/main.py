@@ -101,11 +101,11 @@ async def send_card_number(callback_query: CallbackQuery):
     await callback_query.message.answer('5442064534170965')
     await callback_query.message.answer('Переведи на эту карту $10 по курсу и отправь скриншот в этот чат. '
                                         'Ты получишь доступ, как только твоя оплата будет подтверждена администратором')
-
+    
     await callback_query.message.delete()
     await TaskStates.transfer_to_bel_card_is_done.set()
     await save_state_into_db(callback_query.from_user.id, 'TaskStates:transfer_to_bel_card_is_done')
-
+    
     loop = asyncio.get_event_loop()
     loop.create_task(gsh.async_got_link(callback_query.from_user.id,
                                         callback_query.from_user.full_name,
@@ -213,7 +213,6 @@ async def send_payment_link(message: types.Message, state: FSMContext):
 @logger.catch
 @dp.message_handler(state=TaskStates.transfer_to_bel_card_is_done, content_types=['any'])
 async def check_task(message: types.Message, state: FSMContext):
-    
     message_for_admin = f'Чек оплаты от пользователя {message.from_user.full_name} (@{message.from_user.username}):'
     
     reply_markup = get_ikb_to_confirm_bel_card_payment(message.from_user.id)
@@ -222,8 +221,8 @@ async def check_task(message: types.Message, state: FSMContext):
                          'как только чек будет проверен')
     await state.finish()
     await delete_state_from_db(message.from_user.id)
-    
-    
+
+
 @logger.catch
 @dp.callback_query_handler(callback_data_models.confirm_bel_card_payment_cb_data.filter())
 async def confirm_bel_card_payment(callback_query: CallbackQuery, callback_data: dict):
@@ -236,7 +235,7 @@ async def confirm_bel_card_payment(callback_query: CallbackQuery, callback_data:
     
     await bot.edit_message_reply_markup(ADMIN_ID, callback_query.message.message_id, reply_markup=None)
     await callback_query.answer(cache_time=0)
-
+    
     # try:
     #     task = models.Task(client_tg_id=user_id, current_task=1)
     #     session = db.Session()
@@ -267,8 +266,8 @@ async def confirm_bel_card_payment(callback_query: CallbackQuery, callback_data:
     #             session.close()
     # except ChatNotFound:
     #     pass
-    
-    
+
+
 @logger.catch
 @dp.callback_query_handler(callback_data_models.send_task_cb_data.filter(), state='*')
 async def send_task(callback_query: CallbackQuery, callback_data: dict):
@@ -506,11 +505,11 @@ async def payment_confirmed(user_id):
             await bot.send_message(user_id,
                                    'Оплата прошла успешно! Вот твоя персональная ссылка в закрытый чат '
                                    'марафона:\nhttps://t.me/+z3KnjLUsgsw0YTYy\n\n'
-                                   'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»\n'
-                                   'https://drive.google.com/file/d/1bjTh_qqWYQSHAlnS10Mdgf7AJgdeFQau/view?usp'
-                                   '=share_link\n\n'
-                                   'Нажми на кнопку под сообщением, чтобы получить первое задание',
+                                   'Нажми на кнопку под сообщением, чтобы получить первое задание\n\n'
+                                   'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»:',
                                    reply_markup=get_ikb_to_get_task('1'))
+            with open('Площадки,_сервисы_и_товары_для_продаж_в_строительстве.pdf', 'rb') as checklist:
+                await bot.send_document(user_id, checklist)
         
         except IntegrityError:
             await bot.send_message(user_id, 'Ты уже получал задание')
@@ -571,8 +570,6 @@ async def restore_user_states():
     try:
         for row in session.query(models.State).all():
             await storage.set_state(user=row.client_tg_id, state=row.current_state, chat=row.client_tg_id)
-        session.query(models.State).delete()
-        session.commit()
     except Exception as x:
         logger.exception(x)
     finally:
