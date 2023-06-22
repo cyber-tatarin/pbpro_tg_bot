@@ -34,7 +34,7 @@ storage = MemoryStorage()
 dp = Dispatcher(bot=bot, storage=storage)
 
 # ADMIN_ID = 459471362
-ADMIN_ID = 762424943
+ADMIN_ID = 899761612
 
 
 class TaskStates(StatesGroup):
@@ -95,7 +95,7 @@ async def start(message: types.Message):
 
 
 @logger.catch
-@dp.callback_query_handler(lambda c: c.data == 'bel_card')
+@dp.callback_query_handler(lambda c: c.data == 'bel_card', state='*')
 async def send_card_number(callback_query: CallbackQuery):
     await callback_query.message.answer('Вот номер карты:')
     await callback_query.message.answer('5442064534170965')
@@ -113,7 +113,7 @@ async def send_card_number(callback_query: CallbackQuery):
 
 
 @logger.catch
-@dp.callback_query_handler(lambda c: c.data == 'rus_card')
+@dp.callback_query_handler(lambda c: c.data == 'rus_card', state='*')
 async def get_phone_number_for_payment_link(callback_query: CallbackQuery):
     session = db.Session()
     try:
