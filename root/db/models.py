@@ -12,7 +12,6 @@ from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv, find_dotenv
 
-
 load_dotenv(find_dotenv())
 
 
@@ -25,7 +24,7 @@ class Task(Base):
     
     client_tg_id = Column("client_tg_id", String(10), primary_key=True)
     current_task = Column("current_task", Integer)
-    
+
 
 class State(Base):
     __tablename__ = "states"
@@ -36,16 +35,24 @@ class State(Base):
 
 class User(Base):
     __tablename__ = "users"
-
+    
     client_tg_id = Column("client_tg_id", String(10), primary_key=True)
     order_id = Column("order_id", String(50), unique=True)
     have_paid = Column("have_paid", Boolean, default=False)
-    
-    
+
+
 class Text(Base):
     __tablename__ = "texts"
     
     id = Column(Integer, primary_key=True)
     text = Column(String(2500))
+
+
+class NotCheckedTask(Base):
+    __tablename__ = "not_checked_tasks"
     
+    admin_id = Column("admin_id", String(12), primary_key=True)
+    receiver_id = Column("receiver_id", String(12), primary_key=True)
+    task_number = Column("task_number", String(12), primary_key=True)
+    message_id = Column("message_id", String(12))
     

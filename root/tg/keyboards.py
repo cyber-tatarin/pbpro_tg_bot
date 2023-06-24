@@ -42,10 +42,11 @@ def get_ikb_to_send_payment_link(phone_number, user_id):
 
 
 @logger.catch
-def get_ikb_to_cancel_state():
+def get_ikb_to_cancel_state(receiver_id, task_number):
     ikb_to_drop_state = InlineKeyboardMarkup(row_width=1)
     b1 = InlineKeyboardButton(text='Отменить',
-                              callback_data='drop_state')
+                              callback_data=callback_data_models.cancel_checking_task_cb_data.new(receiver_id,
+                                                                                                  task_number))
     ikb_to_drop_state.add(b1)
     return ikb_to_drop_state
 
