@@ -345,6 +345,8 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
             session.close()
     
     await bot.send_message(callback_query.from_user.id, task_message)
+    await bot.send_message(callback_query.from_user.id, 'Пришли ответ на задание одним следующим сообщением '
+                                                        'в любом формате (текст/аудио/видео)')
     await TaskStates.task_is_done.set()
     
     await callback_query.message.edit_reply_markup(reply_markup=None)
@@ -665,6 +667,8 @@ async def resend_declined_answer(callback_query: CallbackQuery):
     await callback_query.message.edit_reply_markup(reply_markup=None)
     await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
     await TaskStates.task_is_done.set()
+    await bot.send_message(callback_query.from_user.id, 'Пришли ответ на задание одним следующим сообщением '
+                                                        'в любом формате (текст/аудио/видео)')
 
 
 @logger.catch
