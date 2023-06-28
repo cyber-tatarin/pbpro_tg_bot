@@ -1,6 +1,5 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import utils
-import callback_data_models
+from . import callback_data_models, utils
 from root.logger.log import logger
 
 logger = logger

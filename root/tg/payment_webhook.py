@@ -9,7 +9,7 @@ import jinja2
 from sqlalchemy.exc import IntegrityError
 
 from root.prodamus.main import confirm_payment
-from main import payment_confirmed, send_message_to_users_manually, send_task_to_user_manually
+from .main import payment_confirmed, send_message_to_users_manually, send_task_to_user_manually
 from dotenv import load_dotenv, find_dotenv
 
 from root.logger.log import logger

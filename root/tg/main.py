@@ -4,8 +4,6 @@ import sys
 
 from sqlalchemy.exc import IntegrityError
 
-sys.path.append(os.path.abspath(os.path.pardir))
-
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
@@ -15,9 +13,8 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.utils.exceptions import ChatNotFound
 from sqlalchemy.orm import sessionmaker
 
-from keyboards import *
-import callback_data_models
-import utils
+from .keyboards import *
+from . import callback_data_models, utils
 from root.db import setup as db
 from root.db import models
 from root.gsheets import main as gsh
@@ -37,6 +34,9 @@ dp = Dispatcher(bot=bot, storage=storage)
 # ADMIN_ID = [899761612]
 # ADMIN_ID = [1357642007, 459471362]
 ADMIN_ID = [1287712867, 899761612]
+
+database_error_message = 'У нас проблемы с базой данных. Если ты видишь это сообщение, ' \
+                         'напиши, пожалуйста, мне @dimatatatarin'
 
 
 class TaskStates(StatesGroup):
@@ -101,12 +101,11 @@ def remove_not_checked_tasks_from_db(receiver_id, current_task, session):
 async def start(message: types.Message):
     session = db.Session()
     try:
-        CHOOSE_CARD_MESSAGE = session.query(models.Text).filter(models.Text.id == 91).first().text
-        await message.answer(CHOOSE_CARD_MESSAGE, reply_markup=get_ikb_to_choose_payment_card())
+        choose_card_message = session.query(models.Text).filter(models.Text.id == 91).first().text
+        await message.answer(choose_card_message, reply_markup=get_ikb_to_choose_payment_card())
     except Exception as x:
         logger.exception(x)
-        await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                             'напиши, пожалуйста, мне @dimatatatarin')
+        await message.answer(database_error_message)
         await message.delete()
     finally:
         if session.is_active:
@@ -136,12 +135,11 @@ async def send_card_number(callback_query: CallbackQuery):
 async def get_phone_number_for_payment_link(callback_query: CallbackQuery):
     session = db.Session()
     try:
-        GET_PHONE_NUMBER_MESSAGE = session.query(models.Text).filter(models.Text.id == 92).first().text
-        await callback_query.message.answer(GET_PHONE_NUMBER_MESSAGE)
+        get_phone_number_message = session.query(models.Text).filter(models.Text.id == 92).first().text
+        await callback_query.message.answer(get_phone_number_message)
     except Exception as x:
         logger.exception(x)
-        await callback_query.message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                                            'напиши, пожалуйста, мне @dimatatatarin')
+        await callback_query.message.answer(database_error_message)
         await callback_query.answer()
         return
     finally:
@@ -209,23 +207,21 @@ async def check_payment_command(message: types.Message):
 async def send_payment_link(message: types.Message, state: FSMContext):
     session = db.Session()
     try:
-        PAYMENT_LINK_MESSAGE = session.query(models.Text).filter(models.Text.id == 93).first().text
+        payment_link_message = session.query(models.Text).filter(models.Text.id == 93).first().text
     except Exception as x:
         logger.exception(x)
-        await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                             'напиши, пожалуйста, мне @dimatatatarin')
+        await message.answer(database_error_message)
         return
     finally:
         if session.is_active:
             session.close()
     
     try:
-        await message.answer(PAYMENT_LINK_MESSAGE,
+        await message.answer(payment_link_message,
                              reply_markup=get_ikb_to_send_payment_link(message.text, message.from_user.id))
     except Exception as x:
         logger.exception(x)
-        await message.answer('У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                             'напиши, пожалуйста, мне @dimatatatarin')
+        await message.answer(database_error_message)
         return
         
     await state.finish()
@@ -260,7 +256,7 @@ async def send_bel_card_receipt(message: types.Message, state: FSMContext):
             if not_checked_task_obj:
                 try:
                     await bot.delete_message(admin_id, not_checked_task_obj.message_id)
-                except Exception:
+                except:
                     pass
             not_checked_task_obj.message_id = message_id_in_admin_chat.message_id
             session.commit()
@@ -338,29 +334,27 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
     
     session = db.Session()
     try:
-        TASK = session.query(models.Text).filter(models.Text.id == task_number).first().text
+        task_message = session.query(models.Text).filter(models.Text.id == task_number).first().text
     except Exception as x:
         logger.exception(x)
         await bot.send_message(callback_query.from_user.id,
-                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                               'напиши, пожалуйста, мне @dimatatatarin')
+                               database_error_message)
         return
     finally:
         if session.is_active:
             session.close()
     
-    await bot.send_message(callback_query.from_user.id, TASK)
+    await bot.send_message(callback_query.from_user.id, task_message)
     await TaskStates.task_is_done.set()
     
     await callback_query.message.edit_reply_markup(reply_markup=None)
     
     await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
     await callback_query.answer(cache_time=0)
+    
     loop = asyncio.get_event_loop()
     loop.create_task(gsh.async_on_task(callback_query.from_user.id, task_number))
     
-    # await gsh.async_on_task(callback_query.from_user.id, task_number)
-
 
 @logger.catch
 @dp.message_handler(state=TaskStates.task_is_done, content_types=['any'])
@@ -392,7 +386,7 @@ async def check_task(message: types.Message, state: FSMContext):
                     try:
                         await bot.edit_message_reply_markup(admin_id, not_checked_task_obj.message_id,
                                                             reply_markup=None)
-                    except Exception:
+                    except:
                         pass
                     not_checked_task_obj.message_id = message_id_in_admin_chat.message_id
                     session.commit()
@@ -400,18 +394,17 @@ async def check_task(message: types.Message, state: FSMContext):
             except Exception as x:
                 logger.exception(x)
                 await bot.send_message(message.from_user.id,
-                                       'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                                       'напиши, пожалуйста, мне @dimatatatarin')
+                                       database_error_message)
                 return
             
         await message.answer(
-            'Твое задание отправлено на проверку. Ты получишь ответ, как только задание будет проверено')
+            'Твое задание отправлено на проверку. Ты получишь ответ, как только задание будет проверено'
+        )
 
     except Exception as x:
         logger.exception(x)
         await bot.send_message(message.from_user.id,
-                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                               'напиши, пожалуйста, мне @dimatatatarin')
+                               database_error_message)
     finally:
         if session.is_active:
             session.close()
@@ -441,8 +434,7 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
     except Exception as x:
         logger.exception(x)
         await bot.send_message(callback_query.from_user.id,
-                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                               'напиши, пожалуйста, мне @dimatatatarin')
+                               database_error_message)
         return
     
     finally:
@@ -456,8 +448,7 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
     except Exception as x:
         logger.exception(x)
         await bot.send_message(callback_query.from_user.id,
-                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                               'напиши, пожалуйста, мне @dimatatatarin')
+                               database_error_message)
         return
     finally:
         if session.is_active:
@@ -472,8 +463,7 @@ async def accept_task(callback_query: CallbackQuery, callback_data: dict):
             await bot.send_message(receiver_id, 'Твое задание приняли! Хочешь получить следующее?',
                                    reply_markup=reply_markup)
         except Exception as x:
-            await bot.send_message(receiver_id, 'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                                                'напиши, пожалуйста, мне @dimatatatarin')
+            await bot.send_message(receiver_id, database_error_message)
             logger.exception(x)
 
     await callback_query.answer(cache_time=0)
@@ -497,8 +487,7 @@ async def decline_task(callback_query: CallbackQuery, callback_data: dict):
     except Exception as x:
         logger.exception(x)
         await bot.send_message(callback_query.from_user.id,
-                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                               'напиши, пожалуйста, мне @dimatatatarin')
+                               database_error_message)
         return
     
     finally:
@@ -539,8 +528,7 @@ async def accept_task_with_comment(callback_query: CallbackQuery, callback_data:
     except Exception as x:
         logger.exception(x)
         await bot.send_message(callback_query.from_user.id,
-                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                               'напиши, пожалуйста, мне @dimatatatarin')
+                               database_error_message)
 
     finally:
         if session.is_active:
@@ -576,8 +564,7 @@ async def decline_task_with_comment(callback_query: CallbackQuery, callback_data
     except Exception as x:
         logger.exception(x)
         await bot.send_message(callback_query.from_user.id,
-                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                               'напиши, пожалуйста, мне @dimatatatarin')
+                               database_error_message)
         
     finally:
         if session.is_active:
@@ -611,8 +598,7 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
         except Exception as x:
             logger.exception(x)
             await bot.send_message(message.from_user.id,
-                                   'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                                   'напиши, пожалуйста, мне @dimatatatarin')
+                                   database_error_message)
             return
         finally:
             if session.is_active:
@@ -656,8 +642,7 @@ async def send_comment_after_decline(message: types.Message, state: FSMContext):
     except Exception as x:
         logger.exception(x)
         await bot.send_message(message.from_user.id,
-                               'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                               'напиши, пожалуйста, мне @dimatatatarin')
+                               database_error_message)
         return
     
     finally:
@@ -731,8 +716,7 @@ async def payment_confirmed(user_id):
             await bot.send_message(user_id, 'Ты уже получал задание')
         except Exception as x:
             logger.exception(x)
-            await bot.send_message(user_id, 'У нас проблемы с базой данных. Если ты видишь это сообщение, '
-                                            'напиши, пожалуйста, мне @dimatatatarin')
+            await bot.send_message(user_id, database_error_message)
         finally:
             if session.is_active:
                 session.close()

@@ -9,7 +9,7 @@ from pygsheets.custom_types import HorizontalAlignment, FormatType
 from root.logger.log import logger
 
 logger = logger
-key_json = os.path.abspath(os.path.join(os.path.pardir, 'gsheets', 'gsheets_key.json'))
+key_json = os.path.abspath(os.path.join('root', 'gsheets', 'gsheets_key.json'))
 
 
 def find_row_number(user_id):
