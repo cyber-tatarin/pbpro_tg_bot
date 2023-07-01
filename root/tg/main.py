@@ -30,10 +30,10 @@ storage = MemoryStorage()
 
 dp = Dispatcher(bot=bot, storage=storage)
 
-ADMIN_ID = [459471362]
+# ADMIN_ID = [459471362]
 # ADMIN_ID = [899761612]
 # ADMIN_ID = [1357642007, 459471362]
-# ADMIN_ID = [1287712867, 899761612]
+ADMIN_ID = [1287712867, 899761612]
 
 database_error_message = 'У нас проблемы с базой данных. Если ты видишь это сообщение, ' \
                          'напиши, пожалуйста, мне @dimatatatarin'
