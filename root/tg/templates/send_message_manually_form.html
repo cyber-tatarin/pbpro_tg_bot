@@ -1,0 +1,174 @@
+<!-- <!DOCTYPE html>-->
+<!--        <html>-->
+<!--        <body>-->
+
+<!--        <h2>Подтвердить оплату вручную</h2>-->
+
+<!--            <form action="/send_message_manually" method="POST" enctype="multipart/form-data">-->
+<!--                <label for="file">Файл с ID пользователей в первом столбце:</label><br>-->
+<!--                <input type="file" id="file" name="csv_file" required> <br><br>-->
+
+<!--                <label for="message">Текст сообщения:</label><br>-->
+<!--                <textarea id="message" rows = "30" cols = "60" name = "message_text" required></textarea> <br><br>-->
+
+<!--                <label for="pass">Пароль:</label><br>-->
+<!--                <input type="password" id="pass" name="pass" required><br><br>-->
+
+<!--                <input type="submit" value="Отправить">-->
+<!--            </form>-->
+<!--        </body>-->
+<!--        </html>-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            padding: 10px;
+            background-color: #f2f2f2;
+          	margin: 0px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+        h2 {
+            text-align: left;
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+
+        input[type="file"],
+        textarea,
+        input[type="password"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            appearance: none;
+            -webkit-appearance: none;
+            padding: 10px;
+            background-color: #f5f5f5;
+            color: #555;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="file"]::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+
+        input[type="file"]::before {
+            content: 'Выбрать файл';
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            outline: none;
+            white-space: nowrap;
+            -webkit-user-select: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        input[type="file"]:hover::before {
+            background-color: #45a049;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 400px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .back-link {
+            display: block;
+            text-align: left;
+            margin-top: 12px;
+            text-decoration: none;
+            color: #939393;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            textarea {
+                height: 450px;
+            }
+
+            label {
+				display: block;
+				margin-bottom: 5px;
+				font-weight: bold;
+				font-size: 10px;
+        	}
+
+        	body{
+        	margin: 0px;
+        	}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+		<a class="back-link" href="/">< вернуться в меню</a>
+        <h2>Отправить сообщения пользователям вручную</h2>
+        <form action="/send_message_manually" method="POST" enctype="multipart/form-data">
+            <label for="file">Файл с ID пользователей в первом столбце:</label>
+            <input type="file" id="file" name="csv_file" required>
+
+            <label for="message">Текст сообщения:</label>
+            <textarea id="message" rows="10" name="message_text" required></textarea>
+
+            <label for="pass">Пароль:</label>
+            <input type="password" id="pass" name="pass" required>
+
+            <input type="submit" value="Отправить">
+        </form>
+
+    </div>
+</body>
+</html>

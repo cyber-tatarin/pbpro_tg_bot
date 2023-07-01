@@ -1,9 +1,7 @@
-import json
 import os
 
 from aiohttp import web
 import csv
-import io
 import aiohttp_jinja2
 import jinja2
 from sqlalchemy.exc import IntegrityError
@@ -18,9 +16,10 @@ from root.db import setup as db, models
 logger = logger
 load_dotenv(find_dotenv())
 
+templates_location = os.path.join('root', 'tg', 'templates')
 
 env = jinja2.Environment(
-    loader=jinja2.FileSystemLoader('templates'),
+    loader=jinja2.FileSystemLoader(templates_location),
     trim_blocks=True,
     lstrip_blocks=True,
     keep_trailing_newline=True
@@ -45,31 +44,9 @@ async def handle_payment_post_request(request):
 
 
 @logger.catch
+@aiohttp_jinja2.template('confirm_user_payment_manually_form.html')
 async def confirm_user_payment_manually_form(request):
-    return web.Response(
-        text="""
-        <!DOCTYPE html>
-            <html>
-            <body>
-            
-            <h2>Подтвердить оплату вручную</h2>
-    
-            <form action="/confirm_payment_manually" method="POST">
-              <label for="id">ID пользователя:</label><br>
-              <input type="text" id="id" name="id" required><br>
-              
-              <label for="pass">Пароль:</label><br>
-              <input type="password" id="pass" name="pass" required><br><br>
-              
-              <input type="submit" value="Отправить">
-            </form>
-    
-        
-            </body>
-            </html>
-        """,
-        content_type='text/html'
-    )
+    return {}
 
 
 async def confirm_user_payment_manually(request):
@@ -86,32 +63,12 @@ async def confirm_user_payment_manually(request):
         raise web.HTTPFound('/success')
     else:
         logger.info('Someone tried to access admin panel without paassword')
-        raise web.HTTPFound('/fail')
+        raise web.HTTPFound('/wrong_password')
 
 
+@aiohttp_jinja2.template('send_message_manually_form.html')
 async def send_message_manually_form(request):
-    return web.Response(text="""
-    <!DOCTYPE html>
-        <html>
-        <body>
-        
-        <h2>Подтвердить оплату вручную</h2>
-        
-            <form action="/send_message_manually" method="POST" enctype="multipart/form-data">
-                <label for="file">Файл с ID пользователей в первом столбце:</label><br>
-                <input type="file" id="file" name="csv_file" required> <br><br>
-                
-                <label for="message">Текст сообщения:</label><br>
-                <textarea id="message" rows = "30" cols = "60" name = "message_text" required></textarea> <br><br>
-                
-                <label for="pass">Пароль:</label><br>
-                <input type="password" id="pass" name="pass" required><br><br>
-              
-                <input type="submit" value="Отправить">
-            </form>
-        </body>
-        </html>
-    """, content_type="text/html")
+    return {}
 
 
 async def send_message_manually(request):
@@ -147,37 +104,13 @@ async def send_message_manually(request):
     
     else:
         logger.info('Someone tried to access admin panel without paassword')
-        raise web.HTTPFound('/fail')
+        raise web.HTTPFound('/wrong_password')
 
 
+@logger.catch
+@aiohttp_jinja2.template('send_task_manually_form.html')
 async def send_task_manually_form(request):
-    return web.Response(
-        text="""
-        <!DOCTYPE html>
-            <html>
-            <body>
-
-            <h2>Отправить задание вручную</h2>
-
-            <form action="/send_task_manually" method="POST">
-              <label for="id">ID пользователя:</label><br>
-              <input type="text" id="id" name="id" required><br>
-              
-              <label for="task">Номер задания:</label><br>
-              <input type="number" id="task" name="task_number" required><br>
-              
-              <label for="pass">Пароль:</label><br>
-              <input type="password" id="pass" name="pass" required><br><br>
-              
-              <input type="submit" value="Отправить">
-            </form>
-
-
-            </body>
-            </html>
-        """,
-        content_type='text/html'
-    )
+    return {}
 
 
 async def send_task_manually(request):
@@ -208,7 +141,7 @@ async def send_task_manually(request):
         raise web.HTTPFound('/success')
     else:
         logger.info('Someone tried to access admin panel without password or input wrong task number')
-        raise web.HTTPFound('/fail')
+        raise web.HTTPFound('/wrong_password')
     
     
 @aiohttp_jinja2.template('update_text_form.html')
@@ -259,42 +192,31 @@ async def update_text(request):
             raise web.HTTPFound('/update_text_form')
     else:
         logger.info('Someone tried to access admin panel without password')
-        raise web.HTTPFound('/fail')
+        raise web.HTTPFound('/wrong_password')
 
 
 @logger.catch
+@aiohttp_jinja2.template('success.html')
 async def success(request):
-    return web.Response(text="<h2>Все получилось</h2>",
-                        content_type='text/html')
+    return {}
 
 
 @logger.catch
+@aiohttp_jinja2.template('fail.html')
 async def fail(request):
-    return web.Response(text="<h2>Что-то пошло не так. Попробуйте еще раз</h2>",
-                        content_type='text/html')
+    return {}
 
 
 @logger.catch
+@aiohttp_jinja2.template('wrong_password.html')
+async def wrong_password(request):
+    return {}
+
+
+@logger.catch
+@aiohttp_jinja2.template('start_menu.html')
 async def start_menu(request):
-    return web.Response(
-        text="""
-            <!DOCTYPE html>
-                <html>
-                <body>
-
-                <h2>Панель управления ботом @StroyTinder_bot</h2>
-
-                <a href="/confirm_payment_manually_form">Подтвердить оплату вручную</a><br><br>
-                <a href="/send_message_manually_form">Отправить сообщения вручную</a><br><br>
-                <a href="/send_task_manually_form">Отправить задание вручную</a><br><br>
-                <a href="/update_text_form">Редактировать тексты</a><br><br>
-
-
-                </body>
-                </html>
-            """,
-        content_type='text/html'
-    )
+    return {}
 
 
 app = web.Application()
@@ -316,8 +238,10 @@ app.router.add_post('/send_task_manually', send_task_manually)
 
 app.router.add_get('/update_text_form', update_text_form)
 app.router.add_post('/update_text', update_text)
+
+app.router.add_get('/wrong_password', wrong_password)
 aiohttp_jinja2.setup(app, loader=env.loader, context_processors=[aiohttp_jinja2.request_processor])
 
 if __name__ == '__main__':
-    web.run_app(app, host='0.0.0.0')
+    web.run_app(app, host='0.0.0.0', port=80)
     # web.run_app(app, host='127.0.0.1')
