@@ -32,8 +32,8 @@ dp = Dispatcher(bot=bot, storage=storage)
 
 # ADMIN_ID = [459471362]
 # ADMIN_ID = [899761612]
-# ADMIN_ID = [1357642007, 459471362]
-ADMIN_ID = [1287712867, 899761612]
+ADMIN_ID = [1357642007, 459471362]
+# ADMIN_ID = [1287712867, 899761612]
 
 database_error_message = 'У нас проблемы с базой данных. Если ты видишь это сообщение, ' \
                          'напиши, пожалуйста, мне @dimatatatarin'
@@ -365,12 +365,14 @@ async def send_task(callback_query: CallbackQuery, callback_data: dict):
 async def check_task(message: types.Message, state: FSMContext):
     session = db.Session()
     try:
-        task_number = session.query(models.Task).filter(
-            models.Task.client_tg_id == str(message.from_user.id)).first().current_task
+        task_obj = session.query(models.Task).filter(
+            models.Task.client_tg_id == str(message.from_user.id)).first()
+        task_number = task_obj.current_task
+        
         message_for_admin = f'Задание #{task_number} от пользователя {message.from_user.full_name}:'
         
         for admin_id in ADMIN_ID:
-            reply_markup = get_ikb_to_check_users_tasks(message.from_user.id)
+            reply_markup = get_ikb_to_check_users_tasks(message.from_user.id, task_number)
             message_id_in_admin_chat = await utils.send_and_copy_message(bot, admin_id, message,
                                                                          message_for_admin, reply_markup)
             new_not_checked_task = models.NotCheckedTask(admin_id=admin_id, receiver_id=message.from_user.id,
@@ -400,10 +402,6 @@ async def check_task(message: types.Message, state: FSMContext):
                 await bot.send_message(message.from_user.id,
                                        database_error_message)
                 return
-            
-        await message.answer(
-            'Твое задание отправлено на проверку. Ты получишь ответ, как только задание будет проверено'
-        )
 
     except Exception as x:
         logger.exception(x)
@@ -413,119 +411,120 @@ async def check_task(message: types.Message, state: FSMContext):
         if session.is_active:
             session.close()
             
-    await delete_state_from_db(message.from_user.id)
-    await state.finish()
-
-    
-@logger.catch
-@dp.callback_query_handler(callback_data_models.accept_task_cb_data.filter())
-async def accept_task(callback_query: CallbackQuery, callback_data: dict):
-    receiver_id = callback_data['receiver_id']
-    task_number = 0
+# Отправляем задание на проверку
+# ----------------------------------------------------------------------------------------------------------
+# Получаем новое задание
     
     session = db.Session()
-    
     try:
-        task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
-        
-        await remove_keyboard_to_check_task(receiver_id, task.current_task, session)
-        remove_not_checked_tasks_from_db(receiver_id, task.current_task, session)
-        
+        task = session.query(models.Task).filter(models.Task.client_tg_id == str(message.from_user.id)).first()
+    
         task.current_task += 1
         task_number = task.current_task
         session.commit()
-    
+
     except Exception as x:
         logger.exception(x)
-        await bot.send_message(callback_query.from_user.id,
+        await bot.send_message(message.from_user.id,
                                database_error_message)
         return
-    
+
     finally:
         if session.is_active:
             session.close()
-    
+
     session = db.Session()
     try:
         number_of_tasks_query = session.query(models.Text).filter(models.Text.id < 50)
         number_of_tasks = number_of_tasks_query.count()
     except Exception as x:
         logger.exception(x)
-        await bot.send_message(callback_query.from_user.id,
+        await bot.send_message(message.from_user.id,
                                database_error_message)
         return
+    
     finally:
         if session.is_active:
             session.close()
-    
+
     if task_number > number_of_tasks:
-        await bot.send_message(receiver_id, 'Твое задание приняли!')
-        await bot.send_message(receiver_id, 'Ура, все задания выполнены!')
+        await bot.send_message(message.from_user.id, 'Твое задание приняли!')
+        await bot.send_message(message.from_user.id, 'Ура, все задания выполнены!')
+        
     else:
         try:
             reply_markup = get_ikb_to_get_task(str(task_number))
-            await bot.send_message(receiver_id, 'Твое задание приняли! Хочешь получить следующее?',
+            await bot.send_message(message.from_user.id, 'Твое задание отправлено. Хочешь получить следующее?',
                                    reply_markup=reply_markup)
         except Exception as x:
-            await bot.send_message(receiver_id, database_error_message)
+            await bot.send_message(message.from_user.id, database_error_message)
             logger.exception(x)
-
-    await callback_query.answer(cache_time=0)
-
-
-@logger.catch
-@dp.callback_query_handler(callback_data_models.decline_task_cb_data.filter())
-async def decline_task(callback_query: CallbackQuery, callback_data: dict):
-    receiver_id = callback_data['receiver_id']
-    
-    session = db.Session()
-
-    try:
-        task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
         
-        await remove_keyboard_to_check_task(receiver_id, task.current_task, session)
-        remove_not_checked_tasks_from_db(receiver_id, task.current_task, session)
-        
-        session.commit()
+    await delete_state_from_db(message.from_user.id)
+    await state.finish()
 
-    except Exception as x:
-        logger.exception(x)
-        await bot.send_message(callback_query.from_user.id,
-                               database_error_message)
-        return
     
-    finally:
-        if session.is_active:
-            session.close()
-    
-    await bot.send_message(receiver_id, 'Твое задание не приняли, комментарий не дали.',
-                           reply_markup=get_ikb_to_resend_declined_answer())
-    await callback_query.answer(cache_time=0)
+# @logger.catch
+# @dp.callback_query_handler(callback_data_models.accept_task_cb_data.filter())
+# async def accept_task(callback_query: CallbackQuery, callback_data: dict):
+#     receiver_id = callback_data['receiver_id']
+#     task_number = 0
+#
+#     await callback_query.answer(cache_time=0)
+
+
+# @logger.catch
+# @dp.callback_query_handler(callback_data_models.decline_task_cb_data.filter())
+# async def decline_task(callback_query: CallbackQuery, callback_data: dict):
+#     receiver_id = callback_data['receiver_id']
+#
+#     session = db.Session()
+#
+#     try:
+#         task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
+#
+#         await remove_keyboard_to_check_task(receiver_id, task.current_task, session)
+#         remove_not_checked_tasks_from_db(receiver_id, task.current_task, session)
+#
+#         session.commit()
+#
+#     except Exception as x:
+#         logger.exception(x)
+#         await bot.send_message(callback_query.from_user.id,
+#                                database_error_message)
+#         return
+#
+#     finally:
+#         if session.is_active:
+#             session.close()
+#
+#     await bot.send_message(receiver_id, 'Твое задание не приняли, комментарий не дали.',
+#                            reply_markup=get_ikb_to_resend_declined_answer())
+#     await callback_query.answer(cache_time=0)
 
 
 @logger.catch
 @dp.callback_query_handler(callback_data_models.accept_task_with_comment_cb_data.filter())
 async def accept_task_with_comment(callback_query: CallbackQuery, callback_data: dict):
     receiver_id = callback_data['receiver_id']
+    task_number = callback_data['task_number']
 
     session = db.Session()
 
     try:
-        task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
-    
-        await remove_keyboard_to_check_task(receiver_id, task.current_task, session)
+        await remove_keyboard_to_check_task(receiver_id, task_number, session)
         
         user = await bot.get_chat(receiver_id)
         msg = await callback_query.message.answer(
-            f'Вы приняли решение пользователя {user.full_name}, дайте комментарий',
-            reply_markup=get_ikb_to_cancel_state(receiver_id, task.current_task))
+            f'Прокомментируйте ответ на задание #{task_number} от пользователя {user.full_name}',
+            reply_markup=get_ikb_to_cancel_state(receiver_id, task_number))
         await TaskStates.send_comment_after_accept.set()
 
         state = dp.get_current().current_state()
         await state.update_data(receiver_id=receiver_id,
                                 cancel_message=msg['message_id'],
                                 chat_id=msg['chat']['id'],
-                                answer_message=callback_query.message.message_id)
+                                task_number=task_number)
 
         await callback_query.answer(cache_time=0)
 
@@ -539,40 +538,40 @@ async def accept_task_with_comment(callback_query: CallbackQuery, callback_data:
             session.close()
     
 
-@logger.catch
-@dp.callback_query_handler(callback_data_models.decline_task_with_comment_cb_data.filter())
-async def decline_task_with_comment(callback_query: CallbackQuery, callback_data: dict):
-    receiver_id = callback_data['receiver_id']
-    user = await bot.get_chat(receiver_id)
-
-    session = db.Session()
-
-    try:
-        task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
-    
-        await remove_keyboard_to_check_task(receiver_id, task.current_task, session)
-
-        msg = await callback_query.message.answer(
-            f'Вы отклонили решение пользователя {user.full_name}, дайте комментарий',
-            reply_markup=get_ikb_to_cancel_state(receiver_id, task.current_task))
-        await TaskStates.send_comment_after_decline.set()
-
-        state = dp.get_current().current_state()
-        await state.update_data(receiver_id=receiver_id,
-                                cancel_message=msg['message_id'],
-                                chat_id=msg['chat']['id'],
-                                answer_message=callback_query.message.message_id)
-
-        await callback_query.answer(cache_time=0)
-        
-    except Exception as x:
-        logger.exception(x)
-        await bot.send_message(callback_query.from_user.id,
-                               database_error_message)
-        
-    finally:
-        if session.is_active:
-            session.close()
+# @logger.catch
+# @dp.callback_query_handler(callback_data_models.decline_task_with_comment_cb_data.filter())
+# async def decline_task_with_comment(callback_query: CallbackQuery, callback_data: dict):
+#     receiver_id = callback_data['receiver_id']
+#     user = await bot.get_chat(receiver_id)
+#
+#     session = db.Session()
+#
+#     try:
+#         task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
+#
+#         await remove_keyboard_to_check_task(receiver_id, task.current_task, session)
+#
+#         msg = await callback_query.message.answer(
+#             f'Вы отклонили решение пользователя {user.full_name}, дайте комментарий',
+#             reply_markup=get_ikb_to_cancel_state(receiver_id, task.current_task))
+#         await TaskStates.send_comment_after_decline.set()
+#
+#         state = dp.get_current().current_state()
+#         await state.update_data(receiver_id=receiver_id,
+#                                 cancel_message=msg['message_id'],
+#                                 chat_id=msg['chat']['id'],
+#                                 answer_message=callback_query.message.message_id)
+#
+#         await callback_query.answer(cache_time=0)
+#
+#     except Exception as x:
+#         logger.exception(x)
+#         await bot.send_message(callback_query.from_user.id,
+#                                database_error_message)
+#
+#     finally:
+#         if session.is_active:
+#             session.close()
 
 
 @logger.catch
@@ -582,95 +581,81 @@ async def send_comment_after_accept(message: types.Message, state: FSMContext):
     receiver_id = data['receiver_id']
     cancel_message_id = data['cancel_message']
     chat_id = data['chat_id']
-    answer_message_id = data['answer_message']
+    task_number = data['task_number']
+    # answer_message_id = data['answer_message']
     
     session = db.Session()
     try:
-        task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
-        
-        remove_not_checked_tasks_from_db(receiver_id, task.current_task, session)
-        
-        task.current_task += 1
-        task_number = task.current_task
+        remove_not_checked_tasks_from_db(receiver_id, task_number, session)
         session.commit()
 
-        message_for_client = f'Вот ответ от твоего ментора:'
-        session = db.Session()
-        try:
-            number_of_tasks_query = session.query(models.Text).filter(models.Text.id < 50)
-            number_of_tasks = number_of_tasks_query.count()
-        except Exception as x:
-            logger.exception(x)
-            await bot.send_message(message.from_user.id,
-                                   database_error_message)
-            return
-        finally:
-            if session.is_active:
-                session.close()
-        
-        if task_number > number_of_tasks:
-            await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
-                                              divider=False)
-            await bot.send_message(receiver_id, 'Ура! Все задания выполнены!')
-        else:
-            reply_markup = get_ikb_to_get_task(str(task_number))
-            await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
-                                              reply_markup=reply_markup, divider=False)
+        message_for_client = f'Вот комментарий ментора по твоему ответу на задание {task_number}:'
 
+        await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
+                                          divider=False)
+        await bot.send_message(receiver_id, 'Если ты сейчас выполняешь задание, отправляй его одним следующим '
+                                            'сообщением в любом формате')
         await bot.delete_message(chat_id, cancel_message_id)
         await state.finish()
         
     except Exception as x:
         logger.exception(x)
-    finally:
-        if session.is_active:
-            session.close()
-    
-
-@logger.catch
-@dp.message_handler(state=TaskStates.send_comment_after_decline, content_types=['any'])
-async def send_comment_after_decline(message: types.Message, state: FSMContext):
-    data = await state.get_data()
-    receiver_id = data['receiver_id']
-    cancel_message_id = data['cancel_message']
-    chat_id = data['chat_id']
-    answer_message_id = data['answer_message']
-
-    session = db.Session()
-    try:
-        task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
-    
-        remove_not_checked_tasks_from_db(receiver_id, task.current_task, session)
-        
-        session.commit()
-    except Exception as x:
-        logger.exception(x)
         await bot.send_message(message.from_user.id,
                                database_error_message)
         return
-    
     finally:
         if session.is_active:
             session.close()
+            
+    user = await bot.get_chat(receiver_id)
+    await message.answer(f'Ваш комментарий👆 на ответ #{task_number} от пользователя {user.full_name} '
+                         f'(@{user.username}) успешно доставлен')
     
-    await bot.delete_message(chat_id, cancel_message_id)
-    
-    message_for_client = f'Твое решение не приняли. Вот ответ от ментора:'
-    
-    await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
-                                      reply_markup=get_ikb_to_resend_declined_answer(), divider=False)
-    
-    await state.finish()
+
+# @logger.catch
+# @dp.message_handler(state=TaskStates.send_comment_after_decline, content_types=['any'])
+# async def send_comment_after_decline(message: types.Message, state: FSMContext):
+#     data = await state.get_data()
+#     receiver_id = data['receiver_id']
+#     cancel_message_id = data['cancel_message']
+#     chat_id = data['chat_id']
+#     answer_message_id = data['answer_message']
+#
+#     session = db.Session()
+#     try:
+#         task = session.query(models.Task).filter(models.Task.client_tg_id == str(receiver_id)).first()
+#
+#         remove_not_checked_tasks_from_db(receiver_id, task.current_task, session)
+#
+#         session.commit()
+#     except Exception as x:
+#         logger.exception(x)
+#         await bot.send_message(message.from_user.id,
+#                                database_error_message)
+#         return
+#
+#     finally:
+#         if session.is_active:
+#             session.close()
+#
+#     await bot.delete_message(chat_id, cancel_message_id)
+#
+#     message_for_client = f'Твое решение не приняли. Вот ответ от ментора:'
+#
+#     await utils.send_and_copy_message(bot, receiver_id, message, message_for_client,
+#                                       reply_markup=get_ikb_to_resend_declined_answer(), divider=False)
+#
+#     await state.finish()
 
 
-@logger.catch
-@dp.callback_query_handler(lambda c: c.data == 'resend_declined_answer')
-async def resend_declined_answer(callback_query: CallbackQuery):
-    await callback_query.message.edit_reply_markup(reply_markup=None)
-    await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
-    await TaskStates.task_is_done.set()
-    await bot.send_message(callback_query.from_user.id, 'Пришли ответ на задание одним следующим сообщением '
-                                                        'в любом формате (текст/аудио/видео)')
+# @logger.catch
+# @dp.callback_query_handler(lambda c: c.data == 'resend_declined_answer')
+# async def resend_declined_answer(callback_query: CallbackQuery):
+#     await callback_query.message.edit_reply_markup(reply_markup=None)
+#     await save_state_into_db(callback_query.from_user.id, 'TaskStates:task_is_done')
+#     await TaskStates.task_is_done.set()
+#     await bot.send_message(callback_query.from_user.id, 'Пришли ответ на задание одним следующим сообщением '
+#                                                         'в любом формате (текст/аудио/видео)')
 
 
 @logger.catch
@@ -692,7 +677,7 @@ async def drop_state(callback_query: CallbackQuery, callback_data: dict):
 
         for not_checked_task_obj in not_checked_task_objs:
             await bot.edit_message_reply_markup(not_checked_task_obj.admin_id, not_checked_task_obj.message_id,
-                                                reply_markup=get_ikb_to_check_users_tasks(receiver_id))
+                                                reply_markup=get_ikb_to_check_users_tasks(receiver_id, task_number))
     except Exception as x:
         logger.exception(x)
 
