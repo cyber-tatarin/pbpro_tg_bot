@@ -30,13 +30,15 @@ storage = MemoryStorage()
 
 dp = Dispatcher(bot=bot, storage=storage)
 
-# ADMIN_ID = 459471362
+ADMIN_ID = [459471362]
 # ADMIN_ID = [899761612]
 # ADMIN_ID = [1357642007, 459471362]
-ADMIN_ID = [1287712867, 899761612]
+# ADMIN_ID = [1287712867, 899761612]
 
 database_error_message = 'У нас проблемы с базой данных. Если ты видишь это сообщение, ' \
                          'напиши, пожалуйста, мне @dimatatatarin'
+
+gift_filename = os.path.join('root', 'tg', 'Площадки,_сервисы_и_товары_для_продаж_в_строительстве.pdf')
 
 
 class TaskStates(StatesGroup):
@@ -713,7 +715,8 @@ async def payment_confirmed(user_id):
                                    'Нажми на кнопку под сообщением, чтобы получить первое задание\n\n'
                                    'А вот и обещанный подарок — РУКОВОДСТВО: «Площадки, сервисы и товары»:',
                                    reply_markup=get_ikb_to_get_task('1'))
-            with open('Площадки,_сервисы_и_товары_для_продаж_в_строительстве.pdf', 'rb') as checklist:
+
+            with open(gift_filename, 'rb') as checklist:
                 await bot.send_document(user_id, checklist)
         
         except IntegrityError:
